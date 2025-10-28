@@ -82,5 +82,16 @@ stopCapture();                 // stop
 
 Then, integrate these with our docs-specific ToC. 
 
+The Markdown page URL for any given log; 
 
 
+```
+scrolling to route: /designer/reference/designer-api/getting-started
+```
+
+would be; 
+
+
+```
+https://developers.webflow.com/designer/reference/designer-api/getting-started.md
+```
