@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+
+/**
+ * CLI for generating agent skill files
+ */
+
+const { generate, listSources } = require('../src/index');
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const command = args[0];
+const sources = args.slice(1);
+
+// Command handlers
+async function handleGenerate() {
+  if (sources.length === 0) {
+    console.error('Error: Please specify at least one documentation source');
+    console.log(`Available sources: ${listSources().join(', ')}`);
+    console.log('\nUsage: agent-skills generate <source1> [source2] [...]');
+    process.exit(1);
+  }
+
+  try {
+    for (const source of sources) {
+      console.log(`\nGenerating: ${source}`);
+      console.log('='.repeat(50));
+      await generate(source);
+    }
+    console.log('\n✓ All generators completed successfully');
+    process.exit(0);
+  } catch (err) {
+    console.error('Generation failed:', err.message);
+    process.exit(1);
+  }
+}
+
+function handleList() {
+  console.log('Available documentation sources:');
+  listSources().forEach(src => console.log(`  - ${src}`));
+}
+
+function showHelp() {
+  console.log(`
+Agent Skills Generator
+======================
+
+Usage:
+  agent-skills generate <source1> [source2] [...]
+  agent-skills list
+  agent-skills help
+
+Commands:
+  generate <sources...>  Generate skill files from one or more documentation sources
+  list                   List available documentation sources
+  help                   Show this help message
+
+Examples:
+  agent-skills generate webflow-cloud
+  agent-skills generate webflow-cloud webflow-code-components
+  agent-skills list
+  `);
+}
+
+// Route commands
+switch (command) {
+  case 'generate':
+    handleGenerate();
+    break;
+  case 'list':
+    handleList();
+    break;
+  case 'help':
+  case '--help':
+  case '-h':
+    showHelp();
+    break;
+  default:
+    console.error(`Unknown command: ${command || '(none)'}`);
+    showHelp();
+    process.exit(1);
+}

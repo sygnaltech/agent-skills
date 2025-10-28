@@ -1,0 +1,28 @@
+{
+  "name": "@sygnal/agent-skills",
+  "version": "0.1.0",
+  "description": "Generate Claude AI skill files from documentation sources",
+  "main": "src/index.js",
+  "bin": {
+    "agent-skills": "./bin/agent-skills"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webflow",
+    "claude",
+    "ai",
+    "skills",
+    "documentation"
+  ],
+  "author": "Sygnal",
+  "license": "MIT",
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
