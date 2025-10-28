@@ -16,8 +16,10 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE_URL = 'https://developers.webflow.com/';
-const INTRO_PATH = '/data/v2.0.0/reference/rest-introduction.md';
-// /data/v2.0.0/reference/cms.md
+const INTRO_PATH = [
+  '/data/v2.0.0/reference/rest-introduction.md',
+  '/data/v2.0.0/reference/cms.md' 
+];
 
 /**
  * Fetch content from a URL
