@@ -90,6 +90,10 @@ async function generate(options = {}) {
 module.exports = { generate };
 ```
 
+## Notes
+
+https://docs.claude.com/en/docs/claude-code/claude_code_docs_map.md
+
 ## License
 
 MIT
