@@ -144,10 +144,37 @@ function printSummary(results) {
   }
 }
 
+/**
+ * Copy SKILL.md from generator directory to skill output directory
+ * @param {string} sourceDir - Generator directory containing SKILL.md
+ * @param {string} outputDir - Skill output directory (parent of references/)
+ * @returns {boolean} - Success status
+ */
+function copySkillFile(sourceDir, outputDir) {
+  const sourcePath = path.join(sourceDir, 'SKILL.md');
+  const destPath = path.join(outputDir, 'SKILL.md');
+
+  try {
+    if (!fs.existsSync(sourcePath)) {
+      console.warn(`Warning: SKILL.md not found at ${sourcePath}`);
+      return false;
+    }
+
+    const content = fs.readFileSync(sourcePath, 'utf8');
+    fs.writeFileSync(destPath, content, 'utf8');
+    console.log('✓ Copied SKILL.md');
+    return true;
+  } catch (err) {
+    console.error(`✗ Failed to copy SKILL.md: ${err.message}`);
+    return false;
+  }
+}
+
 module.exports = {
   fetchUrl,
   readUrlList,
   ensureDir,
   downloadMarkdownFile,
   printSummary,
+  copySkillFile,
 };

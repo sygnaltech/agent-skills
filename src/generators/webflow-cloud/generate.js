@@ -14,6 +14,7 @@ const {
   ensureDir,
   downloadMarkdownFile,
   printSummary,
+  copySkillFile,
 } = require('../../generator');
 
 const BASE_URL = 'https://developers.webflow.com';
@@ -33,24 +34,32 @@ function pathToFilePath(urlPath) {
  * Main generation function
  */
 async function generate() {
-  const outputDir = path.join(process.cwd(), '.claude/skills/webflow-cloud/references');
+  const skillDir = path.join(process.cwd(), '.claude/skills/webflow-cloud');
+  const outputDir = path.join(skillDir, 'references');
 
   console.log('Webflow Cloud Documentation Generator');
   console.log('=====================================\n');
+  console.log(`Skill directory: ${skillDir}`);
   console.log(`Output directory: ${outputDir}\n`);
 
   try {
-    // Ensure output directory exists
+    // Ensure directories exist
+    ensureDir(skillDir);
     ensureDir(outputDir);
 
-    // Step 1: Read URLs from companion file
+    // Step 1: Copy SKILL.md
+    console.log('Copying SKILL.md...');
+    copySkillFile(__dirname, skillDir);
+    console.log('');
+
+    // Step 2: Read URLs from companion file
     console.log(`Reading URLs from ${URL_LIST_FILE}...\n`);
     const paths = readUrlList(URL_LIST_FILE);
     console.log(`Found ${paths.length} URLs:\n`);
     paths.forEach(p => console.log(`  - ${p}`));
     console.log('');
 
-    // Step 2: Download all markdown files
+    // Step 3: Download all markdown files
     console.log('Downloading markdown files...\n');
     const results = [];
 
