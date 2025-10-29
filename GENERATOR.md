@@ -2,6 +2,13 @@
 
 This document explains how to create `SKILL.md` files for each generator to make them functional Claude Code skills.
 
+To generate a SKILLS.md file for a generator; 
+
+- Run the generator to retrieve the files, they will be in the references directory beneath .claude directory. 
+- READ the files to create the content bullet points needed to support the ToC 
+- Links will be project-relative links to each of those reference files 
+- The purpose is for Claude to easily identify what each file contains and decide where to find what it needs BEFORE opening any files. 
+
 ## Overview
 
 Each generator downloads documentation to `.claude/skills/<generator-name>/references/`, but Claude needs a `SKILL.md` file in the skill folder to understand what the documentation covers and when to activate the skill.
