@@ -1,10 +1,10 @@
 /**
- * Webflow Data API documentation generator
+ * Webflow Code Components documentation generator
  *
  * This generator:
- * 1. Reads URLs from webflow-data-api.txt companion file
+ * 1. Reads URLs from references.txt companion file
  * 2. Downloads each markdown file from developers.webflow.com
- * 3. Saves them using path segments after /data/v2.0.0/
+ * 3. Saves them using path segments after /code-components
  * 4. Creates folders as needed for intermediate path segments
  */
 
@@ -14,18 +14,18 @@ const {
   ensureDir,
   downloadMarkdownFile,
   printSummary,
-} = require('../generator');
+} = require('../../generator');
 
 const BASE_URL = 'https://developers.webflow.com';
-const URL_LIST_FILE = path.join(__dirname, 'webflow-data-api.txt');
+const URL_LIST_FILE = path.join(__dirname, 'references.txt');
 
 /**
  * Convert URL path to file system path
- * Example: /data/v2.0.0/reference/rest-introduction.md -> reference/rest-introduction.md
+ * Example: /code-components/getting-started.md -> getting-started.md
  */
 function pathToFilePath(urlPath) {
-  // Remove /data/v2.0.0/ prefix
-  const relativePath = urlPath.replace(/^\/data\/v2\.0\.0\/?/, '');
+  // Remove /code-components prefix
+  const relativePath = urlPath.replace(/^\/code-components\/?/, '');
   return relativePath;
 }
 
@@ -33,10 +33,10 @@ function pathToFilePath(urlPath) {
  * Main generation function
  */
 async function generate() {
-  const outputDir = path.join(process.cwd(), '.claude/skills/webflow-data-api/references');
+  const outputDir = path.join(process.cwd(), '.claude/skills/webflow-code-components/references');
 
-  console.log('Webflow Data API Documentation Generator');
-  console.log('=========================================\n');
+  console.log('Webflow Code Components Documentation Generator');
+  console.log('================================================\n');
   console.log(`Output directory: ${outputDir}\n`);
 
   try {

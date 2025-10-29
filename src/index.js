@@ -3,15 +3,15 @@
  */
 
 const generators = {
-  'webflow-cloud': require('./generators/webflow-cloud'),
-  'webflow-code-components': require('./generators/webflow-code-components'),
-  'webflow-data-api': require('./generators/webflow-data-api'),
-  'webflow-designer-api': require('./generators/webflow-designer-api'),
+  'webflow-cloud': require('./generators/webflow-cloud/generate'),
+  'webflow-code-components': require('./generators/webflow-code-components/generate'),
+  'webflow-data-api': require('./generators/webflow-data-api/generate'),
+  'webflow-designer-api': require('./generators/webflow-designer-api/generate'),
 };
 
 /**
  * Generate skill files for a specific documentation source
- * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components', 'webflow-data-api')
+ * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components', 'webflow-data-api', 'webflow-designer-api')
  * @returns {Promise<Object>} - Result object with success status
  */
 async function generate(source) {

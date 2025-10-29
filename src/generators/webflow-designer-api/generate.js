@@ -2,7 +2,7 @@
  * Webflow Designer API documentation generator
  *
  * This generator:
- * 1. Reads URLs from webflow-designer-api.txt companion file
+ * 1. Reads URLs from references.txt companion file
  * 2. Downloads each markdown file from developers.webflow.com
  * 3. Creates folders as needed for intermediate path segments
  */
@@ -13,17 +13,17 @@ const {
   ensureDir,
   downloadMarkdownFile,
   printSummary,
-} = require('../generator');
+} = require('../../generator');
 
 const BASE_URL = 'https://developers.webflow.com';
-const URL_LIST_FILE = path.join(__dirname, 'webflow-designer-api.txt');
+const URL_LIST_FILE = path.join(__dirname, 'references.txt');
 
 /**
  * Convert URL path to file system path
- * Example: /data/v2.0.0/reference/rest-introduction.md -> reference/rest-introduction.md
+ * Example: /designer/reference/getting-started.md -> reference/getting-started.md
  */
 function pathToFilePath(urlPath) {
-  // Remove /data/v2.0.0/ prefix
+  // Remove /designer/ prefix
   const relativePath = urlPath.replace(/^\/designer\/?/, '');
   return relativePath;
 }
@@ -35,7 +35,7 @@ async function generate() {
   const outputDir = path.join(process.cwd(), '.claude/skills/webflow-designer-api/references');
 
   console.log('Webflow Designer API Documentation Generator');
-  console.log('=========================================\n');
+  console.log('=============================================\n');
   console.log(`Output directory: ${outputDir}\n`);
 
   try {

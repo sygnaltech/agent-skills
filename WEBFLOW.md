@@ -6,17 +6,33 @@ This tool downloads Webflow documentation from developers.webflow.com for use in
 
 Each generator reads URLs from a companion `.txt` file that explicitly lists which documentation pages to download. This approach gives you full control over which documentation files are included.
 
+## Generator Structure
+
+Each generator is organized in its own folder under `src/generators/` with a consistent structure:
+
+```
+src/generators/
+├── webflow-cloud/
+│   ├── generate.js      # Generator implementation
+│   └── references.txt   # URL list
+├── webflow-code-components/
+│   ├── generate.js
+│   └── references.txt
+├── webflow-data-api/
+│   ├── generate.js
+│   └── references.txt
+└── webflow-designer-api/
+    ├── generate.js
+    └── references.txt
+```
+
 ## URL List Files
 
-Each generator has a companion `.txt` file in the `src/generators/` directory:
-
-- `webflow-cloud.txt` - URLs for Webflow Cloud documentation
-- `webflow-code-components.txt` - URLs for Webflow Code Components documentation
-- `webflow-data-api.txt` - URLs for Webflow Data API documentation
+Each generator folder contains a `references.txt` file that specifies which documentation pages to download.
 
 ### Format
 
-Each `.txt` file should contain:
+Each `references.txt` file should contain:
 - One URL path per line
 - Paths must start with `/` (e.g., `/webflow-cloud/intro.md`)
 - Lines starting with `#` are treated as comments
@@ -41,6 +57,7 @@ Run a generator using the CLI:
 npm run generate webflow-cloud
 npm run generate webflow-code-components
 npm run generate webflow-data-api
+npm run generate webflow-designer-api
 ```
 
 Or programmatically:
@@ -147,7 +164,7 @@ Becomes:
 /designer/reference/designer-api/getting-started.md
 ```
 
-8. Add these URLs to the appropriate `.txt` file in `src/generators/`
+8. Add these URLs to the appropriate `references.txt` file in `src/generators/<generator-name>/`
 
 ## Architecture
 
@@ -156,18 +173,20 @@ Becomes:
 Common functionality is centralized in [src/generator.js](src/generator.js):
 
 - `fetchUrl(url)` - Fetch content with redirect following
-- `readUrlList(urlListFile)` - Read and parse `.txt` files
+- `readUrlList(urlListFile)` - Read and parse `references.txt` files
 - `ensureDir(dirPath)` - Create directories as needed
 - `downloadMarkdownFile(urlPath, baseUrl, outputDir, pathTransform)` - Download and save files
 - `printSummary(results)` - Display download statistics
 
-### Generator Structure
+### Individual Generator Structure
 
-Each generator in `src/generators/`:
-1. Imports shared utilities from [src/generator.js](src/generator.js)
-2. Defines constants for base URL and companion `.txt` file
-3. Implements a `pathToFilePath()` function to strip URL prefixes
-4. Exports a `generate()` function that orchestrates the download process
+Each generator folder (`src/generators/<generator-name>/`) contains:
+1. `generate.js` - Main generator implementation
+   - Imports shared utilities from [src/generator.js](src/generator.js)
+   - Defines constants for base URL and references file path
+   - Implements a `pathToFilePath()` function to strip URL prefixes
+   - Exports a `generate()` function that orchestrates the download process
+2. `references.txt` - URL list for that generator
 
 ### Output
 
@@ -180,3 +199,4 @@ Example:
 - `webflow-cloud` → `.claude/skills/webflow-cloud/references/`
 - `webflow-code-components` → `.claude/skills/webflow-code-components/references/`
 - `webflow-data-api` → `.claude/skills/webflow-data-api/references/`
+- `webflow-designer-api` → `.claude/skills/webflow-designer-api/references/`
