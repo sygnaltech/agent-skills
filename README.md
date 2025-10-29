@@ -1,27 +1,20 @@
 # Agent Skills
 
-Generate Claude AI skill files from documentation.
+Generates Claude AI skill files & reference materials from current online documentation.  We intend to support other agent types similarly in the future. 
+
+Currently focuses on the Webflow platform, including;
+
+- Weblfow Data API
+- Webflow Designer API
+- Webflow Code Components
+- Webflow Cloud
 
 ## Installation
 
-### Local Development
+### From NPM
 
 ```bash
-# From your project
-npm install file:../agent-skills
-
-# Or use npm link
-cd ../agent-skills
-npm link
-
-cd ../your-project
-npm link @sygnal/agent-skills
-```
-
-### From NPM (if published)
-
-```bash
-npm install @sygnal/agent-skills
+npm install --save-dev @sygnal/agent-skills
 ```
 
 ## Usage
@@ -119,29 +112,11 @@ The hook stops ~99% of accidental token waste from bash commands.
 
 **Reference:** [Claude Code Best Practices Setup](https://github.com/PaschalisDim/Claude-Code-Example-Best-Practice-Setup)
 
-## Development
-
-### Adding New Documentation Sources
-
-1. Create a new generator in `src/generators/<source>.js`
-2. Export a `generate(options)` function
-3. Add to `src/index.js` generators map
-
-Example generator structure:
-
-```javascript
-async function generate(options = {}) {
-  const outputDir = options.outputDir || './default/path';
-
-  // Your generation logic here
-
-  return { success: true, totalFiles: 10 };
-}
-
-module.exports = { generate };
-```
-
 ## Notes
+
+We download current documentation into a references directory beneath each skill. 
+
+There is a ToC structure in the SKILL.md which is based on Claude's own documentation hierarchy. 
 
 https://docs.claude.com/en/docs/claude-code/claude_code_docs_map.md
 
