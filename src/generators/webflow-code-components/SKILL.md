@@ -1,8 +1,6 @@
 ---
 name: webflow-code-components
 description: Documentation for Webflow Code Components via DevLink. Use this skill when users ask about creating React components for Webflow, DevLink integration, component props, slots, styling Shadow DOM components, bundling, or importing custom components into Webflow Designer.
-version: 0.1.1
-last-updated: 2025-10-30
 resources:
   - references/**/*.md
 ---

@@ -5,6 +5,7 @@
  */
 
 const { generate, listSources } = require('../src/index');
+const { version } = require('../package.json');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -39,25 +40,32 @@ function handleList() {
   listSources().forEach(src => console.log(`  - ${src}`));
 }
 
+function showVersion() {
+  console.log(`agent-skills v${version}`);
+}
+
 function showHelp() {
   console.log(`
-Agent Skills Generator
-======================
+Agent Skills Generator v${version}
+==================================
 
 Usage:
   agent-skills generate <source1> [source2] [...]
   agent-skills list
   agent-skills help
+  agent-skills --version
 
 Commands:
   generate <sources...>  Generate skill files from one or more documentation sources
   list                   List available documentation sources
   help                   Show this help message
+  --version, -v          Show version number
 
 Examples:
   agent-skills generate webflow-cloud
   agent-skills generate webflow-cloud webflow-code-components
   agent-skills list
+  agent-skills -v
   `);
 }
 
@@ -73,6 +81,10 @@ switch (command) {
   case '--help':
   case '-h':
     showHelp();
+    break;
+  case '--version':
+  case '-v':
+    showVersion();
     break;
   default:
     console.error(`Unknown command: ${command || '(none)'}`);

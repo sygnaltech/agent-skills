@@ -160,6 +160,7 @@ function printSummary(results) {
 
 /**
  * Copy SKILL.md from generator directory to skill output directory
+ * Adds version and last-updated metadata to frontmatter
  * @param {string} sourceDir - Generator directory containing SKILL.md
  * @param {string} outputDir - Skill output directory (parent of references/)
  * @returns {boolean} - Success status
@@ -174,7 +175,52 @@ function copySkillFile(sourceDir, outputDir) {
       return false;
     }
 
-    const content = fs.readFileSync(sourcePath, 'utf8');
+    let content = fs.readFileSync(sourcePath, 'utf8');
+
+    // Get package version
+    const packageJsonPath = path.join(__dirname, '..', 'package.json');
+    let version = '0.1.0'; // fallback
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      version = packageJson.version || version;
+    } catch (e) {
+      console.warn('⚠ Could not read package version, using default');
+    }
+
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+
+    // Add version and last-updated to frontmatter
+    // Match the frontmatter block (---\r?\n...---\r?\n) allowing for different line endings
+    const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+
+    if (frontmatterMatch) {
+      const existingFrontmatter = frontmatterMatch[1];
+
+      // Check if version/last-updated already exist
+      const hasVersion = /^version:/m.test(existingFrontmatter);
+      const hasLastUpdated = /^last-updated:/m.test(existingFrontmatter);
+
+      let newFrontmatter = existingFrontmatter;
+
+      // Add version if not present
+      if (!hasVersion) {
+        newFrontmatter += `\nversion: ${version}`;
+      }
+
+      // Add last-updated if not present
+      if (!hasLastUpdated) {
+        newFrontmatter += `\nlast-updated: ${today}`;
+      }
+
+      // Replace frontmatter (preserve original line endings)
+      content = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, `---\n${newFrontmatter}\n---\n`);
+
+      console.log(`  Added version: ${version}, last-updated: ${today}`);
+    } else {
+      console.warn('⚠ Could not find frontmatter in SKILL.md');
+    }
+
     fs.writeFileSync(destPath, content, 'utf8');
     console.log('✓ Copied SKILL.md');
     return true;
