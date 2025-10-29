@@ -1,6 +1,8 @@
 ---
 name: webflow-designer-api
 description: Webflow Designer Extension API documentation for building apps that extend the Webflow Designer. Use this skill when users ask about Designer Extensions, programmatically manipulating elements, styles, components, variables, pages, assets, or building custom Designer functionality.
+version: 0.1.0
+last-updated: 2025-10-28
 resources:
   - references/**/*.md
 ---

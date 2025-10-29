@@ -1,6 +1,8 @@
 ---
 name: webflow-cloud
-description: Comprehensive documentation for the Webflow Cloud platform. Use this skill when users ask about Webflow authentication, site management, pages, CMS collections, forms, assets, webhooks, publishing, or any Webflow Cloud API operations.
+description: Expert guidance for developing React apps for Webflow Cloud. This skill should be used when users are building, troubleshooting, or optimizing Webflow Cloud apps.
+version: 0.1.1
+last-updated: 2025-10-30
 resources:
   - references/**/*.md
 ---
@@ -8,6 +10,17 @@ resources:
 # Webflow Cloud Platform Documentation
 
 This skill provides comprehensive reference documentation for the Webflow Cloud platform, covering all API endpoints and workflows for programmatic site management.
+
+## When to Use This Skill
+
+Trigger this skill when users are:
+
+- Setting up a new Webflow cloud project
+- Troubleshooting Webflow cloud issues
+
+## Context Management
+
+**Progressive disclosure:** Load reference files only when needed for specific questions:
 
 ## Document Structure
 
