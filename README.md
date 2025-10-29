@@ -22,11 +22,20 @@ npm install --save-dev @sygnal/agent-skills
 ### CLI
 
 ```bash
-# Generate Webflow Cloud documentation
-npx agent-skills generate webflow-cloud
-
 # List available sources
 npx agent-skills list
+
+# Generate Webflow Code Components skill & documentation
+npx agent-skills generate webflow-code-components
+
+# Generate Webflow Data API skill & documentation
+npx agent-skills generate webflow-data-api
+
+# Generate Webflow Designer API skill & documentation
+npx agent-skills generate webflow-designer-api
+
+# Generate Webflow Cloud skill & documentation
+npx agent-skills generate webflow-cloud
 ```
 
 ### Programmatic API
