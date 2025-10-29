@@ -1,6 +1,6 @@
 # Agent Skills
 
-Generates Claude AI skill files & reference materials from current online documentation.  We intend to support other agent types similarly in the future. 
+Generates Claude AI skill files & reference materials for your project from current online documentation.  We intend to support other agent types similarly in the future. 
 
 Currently focuses on the Webflow platform, including;
 
@@ -11,6 +11,8 @@ Currently focuses on the Webflow platform, including;
 
 ## Installation
 
+From your project directory;
+
 ### From NPM
 
 ```bash
@@ -20,6 +22,8 @@ npm install --save-dev @sygnal/agent-skills
 ## Usage
 
 ### CLI
+
+Then install the individual skills you need for your project;
 
 ```bash
 # List available sources
