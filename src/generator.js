@@ -4,6 +4,20 @@
  * This module provides common functionality used by all documentation generators
  */
 
+// Copyright 2025 Michael Wells
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 const https = require('https');
 const http = require('http');
 const fs = require('fs');
@@ -172,7 +186,7 @@ function copySkillFile(sourceDir, outputDir) {
 
 /**
  * Setup Claude Code optimization scripts in user's project
- * Copies bash validation hook and settings to .claude directory
+ * Copies bash validation hook and merges hook config into settings.local.json
  * @returns {boolean} - Success status
  */
 function setupClaudeOptimization() {
@@ -200,15 +214,55 @@ function setupClaudeOptimization() {
       console.log('✓ Copied validate-bash.sh');
     }
 
-    // Copy settings.local.json (only if it doesn't exist)
-    const settingsSource = path.join(__dirname, 'settings.local.json');
+    // Merge hook configuration into settings.local.json
     const settingsDest = path.join(claudeDir, 'settings.local.json');
+    const hookConfig = {
+      hooks: {
+        PreToolUse: [
+          {
+            matcher: "Bash",
+            hooks: [
+              {
+                command: "bash .claude/scripts/validate-bash.sh"
+              }
+            ]
+          }
+        ]
+      }
+    };
 
-    if (fs.existsSync(settingsSource) && !fs.existsSync(settingsDest)) {
-      fs.copyFileSync(settingsSource, settingsDest);
-      console.log('✓ Copied settings.local.json');
-    } else if (fs.existsSync(settingsDest)) {
-      console.log('ℹ settings.local.json already exists, skipping');
+    let settings = {};
+
+    // Read existing settings if they exist
+    if (fs.existsSync(settingsDest)) {
+      try {
+        const existingContent = fs.readFileSync(settingsDest, 'utf8');
+        settings = JSON.parse(existingContent);
+      } catch (e) {
+        console.warn('⚠ Could not parse existing settings.local.json, will merge carefully');
+      }
+    }
+
+    // Merge hooks configuration
+    if (!settings.hooks) {
+      settings.hooks = {};
+    }
+    if (!settings.hooks.PreToolUse) {
+      settings.hooks.PreToolUse = [];
+    }
+
+    // Check if bash hook already exists
+    const bashHookExists = settings.hooks.PreToolUse.some(
+      hook => hook.matcher === "Bash" &&
+      hook.hooks?.some(h => h.command?.includes('validate-bash.sh'))
+    );
+
+    if (!bashHookExists) {
+      settings.hooks.PreToolUse.push(hookConfig.hooks.PreToolUse[0]);
+      fs.writeFileSync(settingsDest, JSON.stringify(settings, null, 2), 'utf8');
+      console.log('✓ Added bash validation hook to settings.local.json');
+    } else {
+      console.log('ℹ Bash validation hook already exists in settings.local.json');
     }
 
     return true;
