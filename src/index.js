@@ -5,11 +5,13 @@
 const generators = {
   'webflow-cloud': require('./generators/webflow-cloud'),
   'webflow-code-components': require('./generators/webflow-code-components'),
+  'webflow-data-api': require('./generators/webflow-data-api'),
+  'webflow-designer-api': require('./generators/webflow-designer-api'),
 };
 
 /**
  * Generate skill files for a specific documentation source
- * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components')
+ * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components', 'webflow-data-api')
  * @returns {Promise<Object>} - Result object with success status
  */
 async function generate(source) {

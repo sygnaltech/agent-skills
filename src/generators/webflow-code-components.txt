@@ -1,0 +1,29 @@
+# Webflow Code Components Documentation URLs
+# One URL per line. Lines starting with # are ignored.
+# URLs should be full paths starting with /code-components/
+
+/code-components/introduction.md
+/code-components/introduction/quick-start.md
+/code-components/component-architecture.md
+/code-components/styling-components.md
+/code-components/installation.md
+/code-components/frameworks-and-libraries.md
+/code-components/define-code-component.md
+/code-components/bundling-and-import.md
+/code-components/webpack-configuration-overrides.md
+/code-components/faqs.md
+/code-components/reference/cli.md
+/code-components/reference/hooks/declareComponent.md
+/code-components/reference/hooks/useWebflowContext.md
+/code-components/reference/prop-types.md
+/code-components/reference/prop-types/text.md
+/code-components/reference/prop-types/rich-text.md
+/code-components/reference/prop-types/text-node.md
+/code-components/reference/prop-types/link.md
+/code-components/reference/prop-types/image.md
+/code-components/reference/prop-types/number.md
+/code-components/reference/prop-types/boolean.md
+/code-components/reference/prop-types/variant.md
+/code-components/reference/prop-types/visibility.md
+/code-components/reference/prop-types/slot.md
+/code-components/reference/prop-types/id.md

@@ -1,0 +1,6 @@
+# Webflow Data API Documentation URLs
+# One URL per line. Lines starting with # are ignored.
+# URLs should be full paths starting with /data/
+
+/data/v2.0.0/reference/rest-introduction.md
+/data/v2.0.0/reference/cms.md

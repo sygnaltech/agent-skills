@@ -1,0 +1,22 @@
+# Webflow Cloud Documentation URLs
+# One URL per line. Lines starting with # are ignored.
+# URLs should be full paths starting with /webflow-cloud/
+
+/webflow-cloud/intro.md
+/webflow-cloud/getting-started.md
+/webflow-cloud/bring-your-own-app.md
+/webflow-cloud/add-sqlite.md
+/webflow-cloud/add-key-value-store.md
+/webflow-cloud/add-object-storage.md
+/webflow-cloud/environment/configuration.md
+/webflow-cloud/environments.md
+/webflow-cloud/deployments.md
+/webflow-cloud/storing-data/overview.md
+/webflow-cloud/storing-data/sqlite.md
+/webflow-cloud/storing-data/key-value-store.md
+/webflow-cloud/storing-data/object-storage.md
+/webflow-cloud/environment.md
+/webflow-cloud/environment/framework-customization.md
+/webflow-cloud/environment/nodejs-compatibility.md
+/webflow-cloud/usage.md
+/webflow-cloud/limits.md
