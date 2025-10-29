@@ -170,6 +170,54 @@ function copySkillFile(sourceDir, outputDir) {
   }
 }
 
+/**
+ * Setup Claude Code optimization scripts in user's project
+ * Copies bash validation hook and settings to .claude directory
+ * @returns {boolean} - Success status
+ */
+function setupClaudeOptimization() {
+  const projectRoot = process.cwd();
+  const claudeDir = path.join(projectRoot, '.claude');
+  const scriptsDir = path.join(claudeDir, 'scripts');
+
+  try {
+    // Ensure directories exist
+    ensureDir(claudeDir);
+    ensureDir(scriptsDir);
+
+    // Copy validate-bash.sh script
+    const validateBashSource = path.join(__dirname, 'scripts', 'validate-bash.sh');
+    const validateBashDest = path.join(scriptsDir, 'validate-bash.sh');
+
+    if (fs.existsSync(validateBashSource)) {
+      fs.copyFileSync(validateBashSource, validateBashDest);
+      // Make executable (Unix systems)
+      try {
+        fs.chmodSync(validateBashDest, 0o755);
+      } catch (e) {
+        // Ignore chmod errors on Windows
+      }
+      console.log('✓ Copied validate-bash.sh');
+    }
+
+    // Copy settings.local.json (only if it doesn't exist)
+    const settingsSource = path.join(__dirname, 'settings.local.json');
+    const settingsDest = path.join(claudeDir, 'settings.local.json');
+
+    if (fs.existsSync(settingsSource) && !fs.existsSync(settingsDest)) {
+      fs.copyFileSync(settingsSource, settingsDest);
+      console.log('✓ Copied settings.local.json');
+    } else if (fs.existsSync(settingsDest)) {
+      console.log('ℹ settings.local.json already exists, skipping');
+    }
+
+    return true;
+  } catch (err) {
+    console.error(`✗ Failed to setup Claude optimization: ${err.message}`);
+    return false;
+  }
+}
+
 module.exports = {
   fetchUrl,
   readUrlList,
@@ -177,4 +225,5 @@ module.exports = {
   downloadMarkdownFile,
   printSummary,
   copySkillFile,
+  setupClaudeOptimization,
 };

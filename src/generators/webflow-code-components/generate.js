@@ -15,6 +15,7 @@ const {
   downloadMarkdownFile,
   printSummary,
   copySkillFile,
+  setupClaudeOptimization,
 } = require('../../generator');
 
 const BASE_URL = 'https://developers.webflow.com';
@@ -47,19 +48,24 @@ async function generate() {
     ensureDir(skillDir);
     ensureDir(outputDir);
 
-    // Step 1: Copy SKILL.md
+    // Step 1: Setup Claude Code optimization
+    console.log('Setting up Claude Code optimization...\n');
+    setupClaudeOptimization();
+    console.log('');
+
+    // Step 2: Copy SKILL.md
     console.log('Copying SKILL.md...');
     copySkillFile(__dirname, skillDir);
     console.log('');
 
-    // Step 2: Read URLs from companion file
+    // Step 3: Read URLs from companion file
     console.log(`Reading URLs from ${URL_LIST_FILE}...\n`);
     const paths = readUrlList(URL_LIST_FILE);
     console.log(`Found ${paths.length} URLs:\n`);
     paths.forEach(p => console.log(`  - ${p}`));
     console.log('');
 
-    // Step 3: Download all markdown files
+    // Step 4: Download all markdown files
     console.log('Downloading markdown files...\n');
     const results = [];
 
