@@ -2,6 +2,8 @@
 # One URL per line. Lines starting with # are ignored.
 # URLs should be full paths starting with /webflow-cloud/
 
+# https://developers.webflow.com/webflow-cloud/llms.txt
+
 /webflow-cloud/intro.md
 /webflow-cloud/getting-started.md
 /webflow-cloud/bring-your-own-app.md

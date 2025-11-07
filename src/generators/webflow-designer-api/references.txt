@@ -2,6 +2,8 @@
 # One URL per line. Lines starting with # are ignored.
 # URLs should be full paths starting with /designer/
 
+# https://developers.webflow.com/designer/llms.txt
+
 /designer/reference/designer-api/getting-started.md
 /designer/reference/webflow-cli.md
 /designer/reference/error-handling.md

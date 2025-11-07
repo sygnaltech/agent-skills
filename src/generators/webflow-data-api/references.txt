@@ -2,6 +2,8 @@
 # One URL per line. Lines starting with # are ignored.
 # URLs should be full paths starting with /data/
 
+# https://developers.webflow.com/data/llms.txt
+
 /data/v2.0.0/reference/rest-introduction/quick-start.md
 /data/v2.0.0/reference/structure-1.md
 /data/v2.0.0/reference/oauth-app.md
