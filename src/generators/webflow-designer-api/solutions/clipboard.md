@@ -3,7 +3,6 @@ name: webflow-designer-api
 description: Webflow Designer Extension API documentation for building apps that extend the Webflow Designer. Use this skill when users ask about Designer Extensions, programmatically manipulating elements, styles, components, variables, pages, assets, or building custom Designer functionality.
 resources:
   - references/**/*.md
-  - solutions/**/*.md
 ---
 
 # Webflow Designer API Documentation
@@ -394,7 +393,12 @@ Activate this skill when users ask about:
 
 ## Specific Solutions & Workarounds
 
-- [Clipboard copy, by button click](solutions/clipboard.md)
-- [Clipboard paste, and immediate processing](solutions/clipboard.md)
-- [Distinguishing between native and code components](solutions/components.md)
+- Clipboard copy, by button click
+- Clipboard paste, and immediate processing 
 
+
+
+For other Webflow capabilities, see:
+- `webflow-cloud` - Webflow Cloud platform and hosting
+- `webflow-code-components` - React code components via DevLink
+- `webflow-data-api` - Data API v2.0 for CMS operations
