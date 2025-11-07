@@ -3,6 +3,7 @@ name: webflow-data-api
 description: Comprehensive documentation for the Webflow Data API (v2.0.0). Use this skill for REST API operations including sites, CMS collections, items, pages, forms, ecommerce, webhooks, users, assets, custom code, and enterprise features. Covers authentication, OAuth, rate limits, publishing workflows, and API structure.
 resources:
   - references/**/*.md
+  - solutions/**/*.md
 ---
 
 # Webflow Data API Documentation

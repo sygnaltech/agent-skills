@@ -3,6 +3,7 @@ name: webflow-cloud
 description: Expert guidance for developing React apps for Webflow Cloud. This skill should be used when users are building, troubleshooting, or optimizing Webflow Cloud apps.
 resources:
   - references/**/*.md
+  - solutions/**/*.md
 ---
 
 # Webflow Cloud Platform Documentation
