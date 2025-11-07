@@ -863,9 +863,5 @@ Activate this skill when users ask about:
 - "Configure webpack for Webflow components"
 - Any DevLink or code component development questions
 
-## Related Skills
+## Specific Solutions, Tips & Workarounds
 
-For other Webflow capabilities, see:
-- `webflow-cloud` - Webflow Cloud platform and hosting
-- `webflow-data-api` - Data API v2.0 for CMS operations
-- `webflow-designer-api` - Designer extension development APIs

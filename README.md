@@ -1,6 +1,6 @@
 # Agent Skills
 
-Generates Claude AI skill files & reference materials for your project from current online documentation.  We intend to support other agent types similarly in the future. 
+Generates Claude AI skill files, reference materials & solutions for your project from current online documentation.  We intend to support other agent types similarly in the future. 
 
 Currently focuses on the Webflow platform, including;
 
@@ -8,6 +8,10 @@ Currently focuses on the Webflow platform, including;
 - Webflow Designer API
 - Webflow Code Components
 - Webflow Cloud
+
+## Updates
+
+- **2025-11-07** - Added solutions support, separate handcrafted documentation that adds important information and solution tips for specific problems
 
 ## Installation
 

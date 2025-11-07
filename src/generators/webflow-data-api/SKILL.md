@@ -282,3 +282,8 @@ This skill provides comprehensive documentation for the Webflow Data API v2.0.0 
 * [update](references/reference/enterprise/workspace-management/update.md) - Update workspace
 * [delete](references/reference/enterprise/workspace-management/delete.md) - Delete workspace
 * [get-site-plan](references/reference/enterprise/workspace-management/get-site-plan.md) - Get site plan
+
+
+## Specific Solutions, Tips & Workarounds
+
+- [CMS Tips](solutions/cms.md)

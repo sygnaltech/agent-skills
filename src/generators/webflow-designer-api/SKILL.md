@@ -392,7 +392,7 @@ Activate this skill when users ask about:
 - "Listen to Designer events"
 - Any Webflow Designer Extension API questions
 
-## Specific Solutions & Workarounds
+## Specific Solutions, Tips & Workarounds
 
 - [Clipboard copy, by button click](solutions/clipboard.md)
 - [Clipboard paste, and immediate processing](solutions/clipboard.md)

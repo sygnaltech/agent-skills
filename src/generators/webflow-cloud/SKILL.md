@@ -176,9 +176,6 @@ Activate this skill when users ask about:
 - "Monitor usage and limits"
 - Any Webflow Cloud platform operations
 
-## Related Skills
+## Specific Solutions, Tips & Workarounds
 
-For other Webflow capabilities, see:
-- `webflow-code-components` - Custom component development for Webflow Designer
-- `webflow-data-api` - Data API v2.0 for CMS operations
-- `webflow-designer-api` - Designer extension development APIs
+
