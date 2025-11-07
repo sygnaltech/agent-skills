@@ -29,6 +29,7 @@ const {
   downloadMarkdownFile,
   printSummary,
   copySkillFile,
+  copySolutionFiles,
   setupClaudeOptimization,
 } = require('../../generator');
 
@@ -70,15 +71,21 @@ async function generate() {
     // Step 2: Copy SKILL.md from package to user's project
     console.log('Copying SKILL.md to skill directory...\n');
     copySkillFile(__dirname, skillDir);
+    console.log('');
 
-    // Step 3: Read URLs from companion file
+    // Step 3: Copy solution files from package to user's project
+    console.log('Copying solution files to skill directory...\n');
+    copySolutionFiles(__dirname, skillDir);
+    console.log('');
+
+    // Step 4: Read URLs from companion file
     console.log(`Reading URLs from ${URL_LIST_FILE}...\n`);
     const paths = readUrlList(URL_LIST_FILE);
     console.log(`Found ${paths.length} URLs:\n`);
     paths.forEach(p => console.log(`  - ${p}`));
     console.log('');
 
-    // Step 4: Download all markdown files
+    // Step 5: Download all markdown files
     console.log('Downloading markdown files...\n');
     const results = [];
 

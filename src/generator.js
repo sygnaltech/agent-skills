@@ -231,6 +231,60 @@ function copySkillFile(sourceDir, outputDir) {
 }
 
 /**
+ * Copy solution files from generator directory to skill output directory
+ * @param {string} sourceDir - Generator directory containing solutions/ folder
+ * @param {string} outputDir - Skill output directory (parent of solutions/)
+ * @returns {boolean} - Success status
+ */
+function copySolutionFiles(sourceDir, outputDir) {
+  const sourceSolutionsDir = path.join(sourceDir, 'solutions');
+  const destSolutionsDir = path.join(outputDir, 'solutions');
+
+  try {
+    // Check if solutions directory exists in the generator
+    if (!fs.existsSync(sourceSolutionsDir)) {
+      console.log('ℹ No solutions directory found, skipping');
+      return true;
+    }
+
+    // Ensure destination directory exists
+    ensureDir(destSolutionsDir);
+
+    // Get list of files in solutions directory
+    const files = fs.readdirSync(sourceSolutionsDir);
+
+    if (files.length === 0) {
+      console.log('ℹ Solutions directory is empty, skipping');
+      return true;
+    }
+
+    // Copy each file
+    let copiedCount = 0;
+    for (const file of files) {
+      const sourcePath = path.join(sourceSolutionsDir, file);
+      const destPath = path.join(destSolutionsDir, file);
+
+      // Only copy files, not directories
+      const stats = fs.statSync(sourcePath);
+      if (stats.isFile()) {
+        fs.copyFileSync(sourcePath, destPath);
+        console.log(`  ✓ Copied solution: ${file}`);
+        copiedCount++;
+      }
+    }
+
+    if (copiedCount > 0) {
+      console.log(`✓ Copied ${copiedCount} solution file(s)`);
+    }
+
+    return true;
+  } catch (err) {
+    console.error(`✗ Failed to copy solution files: ${err.message}`);
+    return false;
+  }
+}
+
+/**
  * Setup Claude Code optimization scripts in user's project
  * Copies bash validation hook and merges hook config into settings.local.json
  * @returns {boolean} - Success status
@@ -325,5 +379,6 @@ module.exports = {
   downloadMarkdownFile,
   printSummary,
   copySkillFile,
+  copySolutionFiles,
   setupClaudeOptimization,
 };
