@@ -13,12 +13,6 @@ Plus;
 
 - Testing skill. Improve Claude's ability to generate valid test image URLs, expecially for unit and integration test construction. 
 
-## Updates
-
-- **2025-11-09** - Added version detection, auto-update, and more testing tools 
-- **2025-11-08** - Added some solution notes, and a new testing skill 
-- **2025-11-07** - Added solutions support, separate handcrafted documentation that adds important information and solution tips for specific problems
-
 ## Installation
 
 From your project directory;
@@ -26,8 +20,14 @@ From your project directory;
 ### From NPM
 
 ```bash
-npm install --save-dev @sygnal/agent-skills
+npm install -g @sygnal/agent-skills
 ```
+
+## Updates
+
+- **2025-11-09** - Added version detection, auto-update, and more testing tools 
+- **2025-11-08** - Added some solution notes, and a new testing skill 
+- **2025-11-07** - Added solutions support, separate handcrafted documentation that adds important information and solution tips for specific problems
 
 ## Usage
 
