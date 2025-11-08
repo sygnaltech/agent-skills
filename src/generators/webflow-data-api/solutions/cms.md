@@ -12,3 +12,12 @@ The CMS Item PATCH endpoint appears to remove all null fields from the CMS Item 
 
 Be aware of this, in case you need to normalize the data to a structure, or check the CMS schema endpoints to determine the actual structure. 
 
+
+
+
+# CMS Field Types
+
+## Text Fields
+
+- Can store at least 10,000 chars, tested 
+

@@ -18,6 +18,8 @@ Through the dashboard the User can-
 
 Webflow does not currently support; 
 
+- Direct access to your Webflow-cloud-hosted 
+    - Including wrangler -remote access 
 - External backups of your D1 data 
 - The ability to directly view or manipulate the D1 schema 
 - Querying D1 data 
