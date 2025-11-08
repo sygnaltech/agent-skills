@@ -192,6 +192,13 @@ Activate this skill when users ask about:
 
 ### [testing](solutions/testing.md)
 
-- How to build a robust testing environment for your Webflow Cloud app 
-- Testing strategy 
-- Github strategy 
+- How to build a robust testing environment for your Webflow Cloud app
+- Testing strategy
+- Github strategy
+
+### [debugging](solutions/debugging.md)
+
+- Troubleshooting deployment failures
+- Debugging server-side and client-side errors
+- Working around logging limitations
+- Common error patterns and solutions 
