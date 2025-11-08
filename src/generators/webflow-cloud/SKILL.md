@@ -178,4 +178,20 @@ Activate this skill when users ask about:
 
 ## Specific Solutions, Tips & Workarounds
 
+### [deploying](solutions/deploying.md)
 
+- Deploying apps to Webflow cloud 
+
+### [environment](solutions/environment.md)
+
+- Using Webflow cloud's environment setup 
+
+### [storage](solutions/storage.md)
+
+- Tips on using Webflow cloud's D1 SQLLite 
+
+### [testing](solutions/testing.md)
+
+- How to build a robust testing environment for your Webflow Cloud app 
+- Testing strategy 
+- Github strategy 
