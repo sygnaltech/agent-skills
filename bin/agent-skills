@@ -6,6 +6,7 @@
 
 const { generate, listSources } = require('../src/index');
 const { version } = require('../package.json');
+const { checkAndUpdate } = require('../src/utils/version-checker');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -71,26 +72,40 @@ Examples:
   `);
 }
 
-// Route commands
-switch (command) {
-  case 'learn':
-  case 'generate':
-    handleGenerate();
-    break;
-  case 'list':
-    handleList();
-    break;
-  case 'help':
-  case '--help':
-  case '-h':
-    showHelp();
-    break;
-  case '--version':
-  case '-v':
-    showVersion();
-    break;
-  default:
-    console.error(`Unknown command: ${command || '(none)'}`);
-    showHelp();
-    process.exit(1);
+// Main execution with version check
+async function main() {
+  // Check for updates before running commands (except for version command)
+  if (command !== '--version' && command !== '-v') {
+    await checkAndUpdate('@sygnal/agent-skills', version, { silent: true });
+  }
+
+  // Route commands
+  switch (command) {
+    case 'learn':
+    case 'generate':
+      await handleGenerate();
+      break;
+    case 'list':
+      handleList();
+      break;
+    case 'help':
+    case '--help':
+    case '-h':
+      showHelp();
+      break;
+    case '--version':
+    case '-v':
+      showVersion();
+      break;
+    default:
+      console.error(`Unknown command: ${command || '(none)'}`);
+      showHelp();
+      process.exit(1);
+  }
 }
+
+// Run the CLI
+main().catch(err => {
+  console.error('Unexpected error:', err.message);
+  process.exit(1);
+});
