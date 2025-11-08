@@ -17,20 +17,22 @@ async function handleGenerate() {
   if (sources.length === 0) {
     console.error('Error: Please specify at least one documentation source');
     console.log(`Available sources: ${listSources().join(', ')}`);
-    console.log('\nUsage: agent-skills generate <source1> [source2] [...]');
+    console.log('\nUsage: agent-skills learn <source1> [source2] [...]');
     process.exit(1);
   }
 
   try {
+    console.log(''); // Blank line at top
     for (const source of sources) {
-      console.log(`\nGenerating: ${source}`);
-      console.log('='.repeat(50));
       await generate(source);
+      if (sources.indexOf(source) < sources.length - 1) {
+        console.log(''); // Add blank line between multiple sources
+      }
     }
-    console.log('\n✓ All generators completed successfully');
+    console.log('\n✓ All skills learned successfully\n');
     process.exit(0);
   } catch (err) {
-    console.error('Generation failed:', err.message);
+    console.error('Learning failed:', err.message);
     process.exit(1);
   }
 }
@@ -50,20 +52,20 @@ Agent Skills Generator v${version}
 ==================================
 
 Usage:
-  agent-skills generate <source1> [source2] [...]
+  agent-skills learn <source1> [source2] [...]
   agent-skills list
   agent-skills help
   agent-skills --version
 
 Commands:
-  generate <sources...>  Generate skill files from one or more documentation sources
+  learn <sources...>     Learn skills from one or more documentation sources
   list                   List available documentation sources
   help                   Show this help message
   --version, -v          Show version number
 
 Examples:
-  agent-skills generate webflow-cloud
-  agent-skills generate webflow-cloud webflow-code-components
+  agent-skills learn webflow-cloud
+  agent-skills learn webflow-cloud webflow-code-components
   agent-skills list
   agent-skills -v
   `);
@@ -71,6 +73,7 @@ Examples:
 
 // Route commands
 switch (command) {
+  case 'learn':
   case 'generate':
     handleGenerate();
     break;

@@ -3,6 +3,7 @@
  */
 
 const generators = {
+  'testing': require('./generators/testing/generate'),
   'webflow-cloud': require('./generators/webflow-cloud/generate'),
   'webflow-code-components': require('./generators/webflow-code-components/generate'),
   'webflow-data-api': require('./generators/webflow-data-api/generate'),
