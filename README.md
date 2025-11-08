@@ -9,8 +9,13 @@ Currently focuses on the Webflow platform, including;
 - Webflow Code Components
 - Webflow Cloud
 
+Plus;
+
+- Testing skill. Improve Claude's ability to generate valid test image URLs, expecially for unit and integration test construction. 
+
 ## Updates
 
+- **2025-11-08** - Added some solution notes, and a new testing skill 
 - **2025-11-07** - Added solutions support, separate handcrafted documentation that adds important information and solution tips for specific problems
 
 ## Installation
