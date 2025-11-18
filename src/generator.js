@@ -36,9 +36,17 @@ async function copyFile(src, dest) {
 
 async function copyPattern(srcDir, pattern, destDir) {
   const files = await glob(pattern, { cwd: srcDir, nodir: true });
+  // Determine top-level segment of the pattern (if any)
+  const patternTop = (pattern || '').split(/[/\\]/)[0];
+  const destHasTop = patternTop && path.basename(destDir) === patternTop;
   for (const relPath of files) {
     const src = path.join(srcDir, relPath);
-    const dest = path.join(destDir, relPath);
+    // Avoid duplicating the top-level directory when dest already includes it.
+    let relToWrite = relPath;
+    if (destHasTop && patternTop && (relPath === patternTop || relPath.startsWith(patternTop + path.sep))) {
+      relToWrite = relPath.slice(patternTop.length + (relPath.startsWith(patternTop + path.sep) ? 1 : 0));
+    }
+    const dest = path.join(destDir, relToWrite);
     await copyFile(src, dest);
     console.log(`Copied: ${src} -> ${dest}`);
   }
