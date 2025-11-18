@@ -17,7 +17,8 @@ const sources = args.slice(1);
 async function handleGenerate() {
   if (sources.length === 0) {
     console.error('Error: Please specify at least one documentation source');
-    console.log(`Available sources: ${listSources().join(', ')}`);
+    const available = await listSources();
+    console.log(`Available sources: ${available.join(', ')}`);
     console.log('\nUsage: agent-skills learn <source1> [source2] [...]');
     process.exit(1);
   }
@@ -38,9 +39,10 @@ async function handleGenerate() {
   }
 }
 
-function handleList() {
+async function handleList() {
   console.log('Available documentation sources:');
-  listSources().forEach(src => console.log(`  - ${src}`));
+  const sources = await listSources();
+  sources.forEach(src => console.log(`  - ${src}`));
 }
 
 function showVersion() {
