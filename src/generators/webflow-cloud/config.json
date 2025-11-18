@@ -1,0 +1,16 @@
+{
+  "name": "webflow-cloud",
+  "description": "Webflow Cloud documentation and solutions.",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://developers.webflow.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": "/webflow-cloud"
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "webflow-data-api",
+  "description": "Webflow Data API documentation and solutions.",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://developers.webflow.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": "/data/v2.0.0"
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ]
+  }
+}

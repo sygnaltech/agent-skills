@@ -1,0 +1,16 @@
+{
+  "name": "webflow-code-components",
+  "description": "Webflow Code Components documentation and solutions.",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://developers.webflow.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": "/code-components"
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ]
+  }
+}

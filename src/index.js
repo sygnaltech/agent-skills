@@ -1,39 +1,37 @@
-/**
- * Main entry point for @sygnal/webflow-agent-skills
- */
+const fs = require('fs/promises');
+const path = require('path');
+const { runGenerator } = require('./generator');
 
-const generators = {
-  'webflow-cloud': require('./generators/webflow-cloud/generate'),
-  'webflow-code-components': require('./generators/webflow-code-components/generate'),
-  'webflow-data-api': require('./generators/webflow-data-api/generate'),
-  'webflow-designer-api': require('./generators/webflow-designer-api/generate'),
-  'testing': require('./generators/testing/generate'),
-};
-
-/**
- * Generate skill files for a specific documentation source
- * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components', 'webflow-data-api', 'webflow-designer-api')
- * @returns {Promise<Object>} - Result object with success status
- */
-async function generate(source) {
-  if (!generators[source]) {
-    throw new Error(`Unknown documentation source: ${source}. Available: ${Object.keys(generators).join(', ')}`);
+async function listSources() {
+  const generatorsDir = path.join(__dirname, 'generators');
+  const entries = await fs.readdir(generatorsDir, { withFileTypes: true });
+  const sources = [];
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const configPath = path.join(generatorsDir, entry.name, 'config.json');
+      try {
+        await fs.access(configPath);
+        sources.push(entry.name);
+      } catch {}
+    }
   }
-
-  const generator = generators[source];
-  return await generator.generate();
+  return sources;
 }
 
 /**
- * List available documentation sources
- * @returns {string[]} - Array of available source names
+ * Generate skill files for a specific documentation source
+ * @param {string} source - The documentation source (e.g., 'webflow-cloud', 'webflow-code-components', ...)
+ * @returns {Promise<Object>} - Result object with success status
  */
-function listSources() {
-  return Object.keys(generators);
+async function generate(source) {
+  const sources = await listSources();
+  if (!sources.includes(source)) {
+    throw new Error(`Unknown documentation source: ${source}. Available: ${sources.join(', ')}`);
+  }
+  return await runGenerator(source);
 }
 
 module.exports = {
   generate,
   listSources,
-  generators,
 };

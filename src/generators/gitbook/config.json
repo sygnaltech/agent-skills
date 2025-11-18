@@ -1,0 +1,16 @@
+{
+  "name": "gitbook",
+  "description": "A skill generated from a GitBook documentation source.",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://docs.example.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": ""
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ]
+  }
+}

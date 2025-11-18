@@ -18,367 +18,123 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
+const { glob } = require('glob');
+const fs = require('fs/promises');
+const fsSync = require('fs');
 const path = require('path');
+const https = require('https');
 
-/**
- * Fetch content from a URL
- * Automatically follows redirects
- */
-function fetchUrl(url) {
-  return new Promise((resolve, reject) => {
-    const protocol = url.startsWith('https') ? https : http;
-
-    protocol.get(url, (res) => {
-      if (res.statusCode === 301 || res.statusCode === 302) {
-        // Follow redirects
-        return fetchUrl(res.headers.location).then(resolve).catch(reject);
-      }
-
-      if (res.statusCode !== 200) {
-        reject(new Error(`Failed to fetch ${url}: ${res.statusCode} ${res.statusMessage}`));
-        return;
-      }
-
-      let data = '';
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      res.on('end', () => {
-        resolve(data);
-      });
-    }).on('error', (err) => {
-      reject(err);
-    });
-  });
+async function ensureDir(dirPath) {
+  if (!dirPath) return;
+  await fs.mkdir(dirPath, { recursive: true });
 }
 
-/**
- * Read URL paths from a companion .txt file
- * @param {string} urlListFile - Path to the .txt file containing URLs
- * @returns {string[]} Array of URL paths
- */
-function readUrlList(urlListFile) {
-  if (!fs.existsSync(urlListFile)) {
-    throw new Error(`URL list file not found: ${urlListFile}`);
-  }
-
-  const content = fs.readFileSync(urlListFile, 'utf8');
-  const lines = content.split('\n');
-
-  const paths = [];
-  for (let line of lines) {
-    // Trim whitespace
-    line = line.trim();
-
-    // Skip empty lines and comments
-    if (!line || line.startsWith('#')) {
-      continue;
-    }
-
-    // Ensure path starts with /
-    if (!line.startsWith('/')) {
-      console.warn(`Warning: Skipping invalid path (must start with /): ${line}`);
-      continue;
-    }
-
-    // Ensure path ends with .md
-    if (!line.endsWith('.md')) {
-      line += '.md';
-    }
-
-    paths.push(line);
-  }
-
-  return paths;
+async function copyFile(src, dest) {
+  await ensureDir(path.dirname(dest));
+  await fs.copyFile(src, dest);
 }
 
-/**
- * Ensure directory exists, creating it if necessary
- * @param {string} dirPath - Directory path to ensure exists
- */
-function ensureDir(dirPath) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
+async function copyPattern(srcDir, pattern, destDir) {
+  const files = await glob(pattern, { cwd: srcDir, nodir: true });
+  for (const relPath of files) {
+    const src = path.join(srcDir, relPath);
+    const dest = path.join(destDir, relPath);
+    await copyFile(src, dest);
+    console.log(`Copied: ${src} -> ${dest}`);
   }
 }
 
-/**
- * Download and save a markdown file
- * @param {string} urlPath - URL path to download (e.g., /webflow-cloud/intro.md)
- * @param {string} baseUrl - Base URL (e.g., https://developers.webflow.com)
- * @param {string} outputDir - Output directory for saving files
- * @param {Function} pathTransform - Function to transform URL path to file path
- * @returns {Promise<{success: boolean, path: string, error?: string}>}
- */
-async function downloadMarkdownFile(urlPath, baseUrl, outputDir, pathTransform) {
-  const fullUrl = `${baseUrl}${urlPath}`;
-  const filePath = pathTransform(urlPath);
-  const fullFilePath = path.join(outputDir, filePath);
-
-  console.log(`Fetching: ${fullUrl}`);
-
+async function runGenerator(skillName) {
+  const generatorDir = path.join(__dirname, 'generators', skillName);
+  const outputDir = path.resolve(process.cwd(), '.claude', 'skills', skillName);
+  // Load config.json
+  const configPath = path.join(generatorDir, 'config.json');
+  let config;
   try {
-    const content = await fetchUrl(fullUrl);
-
-    // Ensure directory exists
-    const dir = path.dirname(fullFilePath);
-    ensureDir(dir);
-
-    // Save file
-    fs.writeFileSync(fullFilePath, content, 'utf8');
-    console.log(`✓ Saved: ${filePath}`);
-
-    return { success: true, path: urlPath };
-  } catch (err) {
-    console.error(`✗ Failed: ${urlPath} - ${err.message}`);
-    return { success: false, path: urlPath, error: err.message };
+    config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+  } catch (e) {
+    console.error(`Could not read config.json for ${skillName}:`, e.message);
+    return;
   }
-}
 
-/**
- * Print a summary of download results
- * @param {Array<{success: boolean, path: string, error?: string}>} results
- */
-function printSummary(results) {
-  console.log('\n=====================================');
-  console.log('Summary:');
-  const successful = results.filter(r => r.success).length;
-  const failed = results.filter(r => !r.success).length;
-  console.log(`✓ Successfully downloaded: ${successful} files`);
-  if (failed > 0) {
-    console.log(`✗ Failed: ${failed} files`);
-    console.log('\nFailed files:');
-    results.filter(r => !r.success).forEach(r => {
-      console.log(`  - ${r.path}: ${r.error}`);
-    });
-  }
-}
-
-/**
- * Copy SKILL.md from generator directory to skill output directory
- * Adds version and last-updated metadata to frontmatter
- * @param {string} sourceDir - Generator directory containing SKILL.md
- * @param {string} outputDir - Skill output directory (parent of references/)
- * @returns {boolean} - Success status
- */
-function copySkillFile(sourceDir, outputDir) {
-  const sourcePath = path.join(sourceDir, 'SKILL.md');
-  const destPath = path.join(outputDir, 'SKILL.md');
-
-  try {
-    if (!fs.existsSync(sourcePath)) {
-      console.warn(`Warning: SKILL.md not found at ${sourcePath}`);
-      return false;
-    }
-
-    let content = fs.readFileSync(sourcePath, 'utf8');
-
-    // Get package version
-    const packageJsonPath = path.join(__dirname, '..', 'package.json');
-    let version = '0.1.0'; // fallback
+  // Download references using config.source
+  if (config.source && config.source.baseUrl && config.source.referencesFile) {
+    const referencesTxtPath = path.join(generatorDir, config.source.referencesFile);
+    const referencesOutDir = path.join(outputDir, 'references');
+    const pathPrefixToRemove = config.source.pathPrefixToRemove || '';
     try {
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-      version = packageJson.version || version;
+      await ensureDir(referencesOutDir);
+      const refsTxt = await fs.readFile(referencesTxtPath, 'utf8');
+      const urls = refsTxt.split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(l => l && !l.startsWith('#'));
+      for (const urlPath of urls) {
+        let relPath = urlPath;
+        if (pathPrefixToRemove && relPath.startsWith(pathPrefixToRemove)) {
+          relPath = relPath.slice(pathPrefixToRemove.length);
+          if (relPath.startsWith('/')) relPath = relPath.slice(1);
+        }
+        const destPath = path.join(referencesOutDir, relPath);
+        await ensureDir(path.dirname(destPath));
+        const fullUrl = config.source.baseUrl + urlPath;
+        await new Promise((resolve, reject) => {
+          https.get(fullUrl, res => {
+            if (res.statusCode !== 200) {
+              console.warn(`Failed to download ${fullUrl}: ${res.statusCode}`);
+              return resolve();
+            }
+            const fileStream = fsSync.createWriteStream(destPath);
+            res.pipe(fileStream);
+            fileStream.on('finish', () => {
+              fileStream.close();
+              console.log(`Downloaded: ${fullUrl} -> ${destPath}`);
+              resolve();
+            });
+          }).on('error', err => {
+            console.warn(`Error downloading ${fullUrl}: ${err.message}`);
+            resolve();
+          });
+        });
+        // Small delay to be nice to the server
+        await new Promise(r => setTimeout(r, 200));
+      }
     } catch (e) {
-      console.warn('⚠ Could not read package version, using default');
+      // No references.txt, skip
     }
-
-    // Get today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0];
-
-    // Add version and last-updated to frontmatter
-    // Match the frontmatter block (---\r?\n...---\r?\n) allowing for different line endings
-    const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
-
-    if (frontmatterMatch) {
-      const existingFrontmatter = frontmatterMatch[1];
-
-      // Check if version/last-updated already exist
-      const hasVersion = /^version:/m.test(existingFrontmatter);
-      const hasLastUpdated = /^last-updated:/m.test(existingFrontmatter);
-
-      let newFrontmatter = existingFrontmatter;
-
-      // Add version if not present
-      if (!hasVersion) {
-        newFrontmatter += `\nversion: ${version}`;
-      }
-
-      // Add last-updated if not present
-      if (!hasLastUpdated) {
-        newFrontmatter += `\nlast-updated: ${today}`;
-      }
-
-      // Replace frontmatter (preserve original line endings)
-      content = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, `---\n${newFrontmatter}\n---\n`);
-
-      console.log(`  Added version: ${version}, last-updated: ${today}`);
-    } else {
-      console.warn('⚠ Could not find frontmatter in SKILL.md');
-    }
-
-    fs.writeFileSync(destPath, content, 'utf8');
-    console.log('✓ Copied SKILL.md');
-    return true;
-  } catch (err) {
-    console.error(`✗ Failed to copy SKILL.md: ${err.message}`);
-    return false;
   }
-}
 
-/**
- * Copy solution files from generator directory to skill output directory
- * @param {string} sourceDir - Generator directory containing solutions/ folder
- * @param {string} outputDir - Skill output directory (parent of solutions/)
- * @returns {boolean} - Success status
- */
-function copySolutionFiles(sourceDir, outputDir) {
-  const sourceSolutionsDir = path.join(sourceDir, 'solutions');
-  const destSolutionsDir = path.join(outputDir, 'solutions');
+  // (removed duplicate configPath/config)
 
-  try {
-    // Check if solutions directory exists in the generator
-    if (!fs.existsSync(sourceSolutionsDir)) {
-      console.log('ℹ No solutions directory found, skipping');
-      return true;
+  // Copy SKILL.md if specified
+  if (config.assets && config.assets.skillFile) {
+    const src = path.join(generatorDir, config.assets.skillFile);
+    const dest = path.join(outputDir, 'SKILL.md');
+    try {
+      await copyFile(src, dest);
+      console.log(`Copied SKILL.md for ${skillName}`);
+    } catch (e) {
+      console.warn(`SKILL.md not found for ${skillName}`);
     }
-
-    // Ensure destination directory exists
-    ensureDir(destSolutionsDir);
-
-    // Get list of files in solutions directory
-    const files = fs.readdirSync(sourceSolutionsDir);
-
-    if (files.length === 0) {
-      console.log('ℹ Solutions directory is empty, skipping');
-      return true;
-    }
-
-    // Copy each file
-    let copiedCount = 0;
-    for (const file of files) {
-      const sourcePath = path.join(sourceSolutionsDir, file);
-      const destPath = path.join(destSolutionsDir, file);
-
-      // Only copy files, not directories
-      const stats = fs.statSync(sourcePath);
-      if (stats.isFile()) {
-        fs.copyFileSync(sourcePath, destPath);
-        console.log(`  ✓ Copied solution: ${file}`);
-        copiedCount++;
-      }
-    }
-
-    if (copiedCount > 0) {
-      console.log(`✓ Copied ${copiedCount} solution file(s)`);
-    }
-
-    return true;
-  } catch (err) {
-    console.error(`✗ Failed to copy solution files: ${err.message}`);
-    return false;
   }
-}
 
-/**
- * Setup Claude Code optimization scripts in user's project
- * Copies bash validation hook and merges hook config into settings.local.json
- * @returns {boolean} - Success status
- */
-function setupClaudeOptimization() {
-  const projectRoot = process.cwd();
-  const claudeDir = path.join(projectRoot, '.claude');
-  const scriptsDir = path.join(claudeDir, 'scripts');
-
-  try {
-    // Ensure directories exist
-    ensureDir(claudeDir);
-    ensureDir(scriptsDir);
-
-    // Copy validate-bash.sh script
-    const validateBashSource = path.join(__dirname, 'scripts', 'validate-bash.sh');
-    const validateBashDest = path.join(scriptsDir, 'validate-bash.sh');
-
-    if (fs.existsSync(validateBashSource)) {
-      fs.copyFileSync(validateBashSource, validateBashDest);
-      // Make executable (Unix systems)
-      try {
-        fs.chmodSync(validateBashDest, 0o755);
-      } catch (e) {
-        // Ignore chmod errors on Windows
-      }
-      console.log('✓ Copied validate-bash.sh');
+  // Copy solution files if specified
+  if (config.assets && Array.isArray(config.assets.solutions)) {
+    for (const pattern of config.assets.solutions) {
+      await copyPattern(generatorDir, pattern, path.join(outputDir, 'solutions'));
     }
-
-    // Merge hook configuration into settings.local.json
-    const settingsDest = path.join(claudeDir, 'settings.local.json');
-    const hookConfig = {
-      hooks: {
-        PreToolUse: [
-          {
-            matcher: "Bash",
-            hooks: [
-              {
-                command: "bash .claude/scripts/validate-bash.sh"
-              }
-            ]
-          }
-        ]
-      }
-    };
-
-    let settings = {};
-
-    // Read existing settings if they exist
-    if (fs.existsSync(settingsDest)) {
-      try {
-        const existingContent = fs.readFileSync(settingsDest, 'utf8');
-        settings = JSON.parse(existingContent);
-      } catch (e) {
-        console.warn('⚠ Could not parse existing settings.local.json, will merge carefully');
-      }
-    }
-
-    // Merge hooks configuration
-    if (!settings.hooks) {
-      settings.hooks = {};
-    }
-    if (!settings.hooks.PreToolUse) {
-      settings.hooks.PreToolUse = [];
-    }
-
-    // Check if bash hook already exists
-    const bashHookExists = settings.hooks.PreToolUse.some(
-      hook => hook.matcher === "Bash" &&
-      hook.hooks?.some(h => h.command?.includes('validate-bash.sh'))
-    );
-
-    if (!bashHookExists) {
-      settings.hooks.PreToolUse.push(hookConfig.hooks.PreToolUse[0]);
-      fs.writeFileSync(settingsDest, JSON.stringify(settings, null, 2), 'utf8');
-      console.log('✓ Added bash validation hook to settings.local.json');
-    } else {
-      console.log('ℹ Bash validation hook already exists in settings.local.json');
-    }
-
-    return true;
-  } catch (err) {
-    console.error(`✗ Failed to setup Claude optimization: ${err.message}`);
-    return false;
   }
+
+  // Copy references if specified
+  if (config.assets && Array.isArray(config.assets.references)) {
+    for (const pattern of config.assets.references) {
+      await copyPattern(generatorDir, pattern, path.join(outputDir, 'references'));
+    }
+  }
+
+  // Add more logic here for other asset types if needed
 }
 
 module.exports = {
-  fetchUrl,
-  readUrlList,
-  ensureDir,
-  downloadMarkdownFile,
-  printSummary,
-  copySkillFile,
-  copySolutionFiles,
-  setupClaudeOptimization,
+  runGenerator,
 };
+
