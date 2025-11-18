@@ -2,16 +2,21 @@
 
 Generates Claude AI skill files, reference materials & solutions for your project from current online documentation.  We intend to support other agent types similarly in the future. 
 
-Currently focuses on the Webflow platform, including;
+## Available Skills
 
-- Weblfow Data API
-- Webflow Designer API
-- Webflow Code Components
-- Webflow Cloud
+| Skill | Description | Use When |
+|-------|-------------|----------|
+| **webflow-data-api** | Comprehensive documentation for the Webflow Data API (v2.0.0) covering REST API operations including sites, CMS collections, items, pages, forms, ecommerce, webhooks, users, assets, custom code, and enterprise features | Working with Webflow's REST API, managing CMS content, handling webhooks, or building integrations |
+| **webflow-designer-api** | Webflow Designer Extension API documentation for building apps that extend the Webflow Designer, programmatically manipulating elements, styles, components, variables, pages, and assets | Creating Designer Extensions, building custom Designer tools, or automating design workflows |
+| **webflow-code-components** | Documentation for building and deploying React code components to Webflow via DevLink, including component props, slots, styling Shadow DOM components, and bundling | Developing React components for Webflow, working with DevLink, or creating reusable interactive components |
+| **webflow-cloud** | Expert guidance for developing React apps for Webflow Cloud platform, covering deployment, environment configuration, data storage (SQLite, key-value, object storage), and troubleshooting | Deploying apps to Webflow Cloud, setting up databases, or configuring cloud environments |
+| **testing** | Testing tools and tips for setting up testing frameworks, including strategies for generating test data and valid test image URLs for unit and integration testing | Setting up test frameworks, generating test data, or improving test coverage |
 
-Plus;
+### Under R&D
 
-- Testing skill. Improve Claude's ability to generate valid test image URLs, expecially for unit and integration test construction. 
+| Skill | Description | Use When |
+|-------|-------------|----------|
+| **github-debug** | Tools for investigating open GitHub issues related to specific package errors and bugs using GitHub API integration | Debugging dependency errors, investigating build failures, or researching known issues in packages | 
 
 ## Installation
 
@@ -23,11 +28,6 @@ From your project directory;
 npm install -g @sygnal/agent-skills
 ```
 
-## Updates
-
-- **2025-11-09** - Added version detection, auto-update, and more testing tools 
-- **2025-11-08** - Added some solution notes, and a new testing skill 
-- **2025-11-07** - Added solutions support, separate handcrafted documentation that adds important information and solution tips for specific problems
 
 ## Usage
 
@@ -51,6 +51,13 @@ npx agent-skills generate webflow-designer-api
 # Generate Webflow Cloud skill & documentation
 npx agent-skills generate webflow-cloud
 ```
+
+### Why Skills? 
+
+- Token efficient, using progressive 
+- Automatically invoked 
+
+
 
 ### Programmatic API
 
