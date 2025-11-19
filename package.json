@@ -1,6 +1,6 @@
 {
   "name": "@sygnal/agent-skills",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Generate Claude AI skill files from documentation sources",
   "main": "src/index.js",
   "bin": {
