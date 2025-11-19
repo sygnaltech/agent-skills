@@ -1,16 +1,23 @@
 {
   "name": "webflow-designer-api",
   "description": "Webflow Designer API documentation and solutions.",
-  "type": "webflow-docs",
-  "source": {
-    "baseUrl": "https://developers.webflow.com",
-    "referencesFile": "references.txt",
-    "pathPrefixToRemove": "/designer"
-  },
-  "assets": {
-    "skillFile": "SKILL.md",
-    "solutions": [
-      "solutions/**/*.md"
-    ]
-  }
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/**/*.md",
+      "dest": "solutions"
+    },
+    {
+      "type": "downloadFileList",
+      "baseUrl": "https://developers.webflow.com",
+      "listFile": "references.txt",
+      "stripPrefix": "/designer",
+      "dest": "references"
+    }
+  ]
 }

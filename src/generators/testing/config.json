@@ -1,11 +1,16 @@
 {
   "name": "testing",
   "description": "Testing tools and tips for setting up testing frameworks.",
-  "type": "static-files",
-  "assets": {
-    "skillFile": "SKILL.md",
-    "solutions": [
-      "solutions/test-data-images.md"
-    ]
-  }
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/test-data-images.md",
+      "dest": "solutions"
+    }
+  ]
 }

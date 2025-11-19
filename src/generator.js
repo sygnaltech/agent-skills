@@ -32,6 +32,7 @@ async function ensureDir(dirPath) {
 async function copyFile(src, dest) {
   await ensureDir(path.dirname(dest));
   await fs.copyFile(src, dest);
+  console.log(`Copied: ${src} -> ${dest}`);
 }
 
 async function copyPattern(srcDir, pattern, destDir) {
@@ -48,13 +49,57 @@ async function copyPattern(srcDir, pattern, destDir) {
     }
     const dest = path.join(destDir, relToWrite);
     await copyFile(src, dest);
-    console.log(`Copied: ${src} -> ${dest}`);
+  }
+}
+
+async function downloadFileList(baseUrl, listFilePath, destDir, stripPrefix = '') {
+  try {
+    await ensureDir(destDir);
+    const refsTxt = await fs.readFile(listFilePath, 'utf8');
+    const urls = refsTxt.split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(l => l && !l.startsWith('#'));
+
+    for (const urlPath of urls) {
+      let relPath = urlPath;
+      if (stripPrefix && relPath.startsWith(stripPrefix)) {
+        relPath = relPath.slice(stripPrefix.length);
+        if (relPath.startsWith('/')) relPath = relPath.slice(1);
+      }
+      const destPath = path.join(destDir, relPath);
+      await ensureDir(path.dirname(destPath));
+      const fullUrl = baseUrl + urlPath;
+
+      await new Promise((resolve, reject) => {
+        https.get(fullUrl, res => {
+          if (res.statusCode !== 200) {
+            console.warn(`Failed to download ${fullUrl}: ${res.statusCode}`);
+            return resolve();
+          }
+          const fileStream = fsSync.createWriteStream(destPath);
+          res.pipe(fileStream);
+          fileStream.on('finish', () => {
+            fileStream.close();
+            console.log(`Downloaded: ${fullUrl} -> ${destPath}`);
+            resolve();
+          });
+        }).on('error', err => {
+          console.warn(`Error downloading ${fullUrl}: ${err.message}`);
+          resolve();
+        });
+      });
+      // Small delay to be nice to the server
+      await new Promise(r => setTimeout(r, 200));
+    }
+  } catch (e) {
+    console.warn(`Failed to process download list ${listFilePath}: ${e.message}`);
   }
 }
 
 async function runGenerator(skillName) {
   const generatorDir = path.join(__dirname, 'generators', skillName);
   const outputDir = path.resolve(process.cwd(), '.claude', 'skills', skillName);
+
   // Load config.json
   const configPath = path.join(generatorDir, 'config.json');
   let config;
@@ -65,84 +110,53 @@ async function runGenerator(skillName) {
     return;
   }
 
-  // Download references using config.source
-  if (config.source && config.source.baseUrl && config.source.referencesFile) {
-    const referencesTxtPath = path.join(generatorDir, config.source.referencesFile);
-    const referencesOutDir = path.join(outputDir, 'references');
-    const pathPrefixToRemove = config.source.pathPrefixToRemove || '';
+  if (!config.assets || !Array.isArray(config.assets)) {
+    console.warn(`No assets array found in config.json for ${skillName}`);
+    return;
+  }
+
+  for (const asset of config.assets) {
     try {
-      await ensureDir(referencesOutDir);
-      const refsTxt = await fs.readFile(referencesTxtPath, 'utf8');
-      const urls = refsTxt.split(/\r?\n/)
-        .map(l => l.trim())
-        .filter(l => l && !l.startsWith('#'));
-      for (const urlPath of urls) {
-        let relPath = urlPath;
-        if (pathPrefixToRemove && relPath.startsWith(pathPrefixToRemove)) {
-          relPath = relPath.slice(pathPrefixToRemove.length);
-          if (relPath.startsWith('/')) relPath = relPath.slice(1);
-        }
-        const destPath = path.join(referencesOutDir, relPath);
-        await ensureDir(path.dirname(destPath));
-        const fullUrl = config.source.baseUrl + urlPath;
-        await new Promise((resolve, reject) => {
-          https.get(fullUrl, res => {
-            if (res.statusCode !== 200) {
-              console.warn(`Failed to download ${fullUrl}: ${res.statusCode}`);
-              return resolve();
-            }
-            const fileStream = fsSync.createWriteStream(destPath);
-            res.pipe(fileStream);
-            fileStream.on('finish', () => {
-              fileStream.close();
-              console.log(`Downloaded: ${fullUrl} -> ${destPath}`);
-              resolve();
-            });
-          }).on('error', err => {
-            console.warn(`Error downloading ${fullUrl}: ${err.message}`);
-            resolve();
-          });
-        });
-        // Small delay to be nice to the server
-        await new Promise(r => setTimeout(r, 200));
+      switch (asset.type) {
+        case 'copyFile':
+          if (asset.src && asset.dest) {
+            await copyFile(
+              path.join(generatorDir, asset.src),
+              path.join(outputDir, asset.dest)
+            );
+          }
+          break;
+
+        case 'copyFolder':
+          if (asset.pattern && asset.dest) {
+            await copyPattern(
+              generatorDir,
+              asset.pattern,
+              path.join(outputDir, asset.dest)
+            );
+          }
+          break;
+
+        case 'downloadFileList':
+          if (asset.baseUrl && asset.listFile && asset.dest) {
+            await downloadFileList(
+              asset.baseUrl,
+              path.join(generatorDir, asset.listFile),
+              path.join(outputDir, asset.dest),
+              asset.stripPrefix
+            );
+          }
+          break;
+
+        default:
+          console.warn(`Unknown asset type: ${asset.type}`);
       }
-    } catch (e) {
-      // No references.txt, skip
+    } catch (err) {
+      console.error(`Error processing asset ${asset.type}:`, err.message);
     }
   }
-
-  // (removed duplicate configPath/config)
-
-  // Copy SKILL.md if specified
-  if (config.assets && config.assets.skillFile) {
-    const src = path.join(generatorDir, config.assets.skillFile);
-    const dest = path.join(outputDir, 'SKILL.md');
-    try {
-      await copyFile(src, dest);
-      console.log(`Copied SKILL.md for ${skillName}`);
-    } catch (e) {
-      console.warn(`SKILL.md not found for ${skillName}`);
-    }
-  }
-
-  // Copy solution files if specified
-  if (config.assets && Array.isArray(config.assets.solutions)) {
-    for (const pattern of config.assets.solutions) {
-      await copyPattern(generatorDir, pattern, path.join(outputDir, 'solutions'));
-    }
-  }
-
-  // Copy references if specified
-  if (config.assets && Array.isArray(config.assets.references)) {
-    for (const pattern of config.assets.references) {
-      await copyPattern(generatorDir, pattern, path.join(outputDir, 'references'));
-    }
-  }
-
-  // Add more logic here for other asset types if needed
 }
 
 module.exports = {
   runGenerator,
 };
-

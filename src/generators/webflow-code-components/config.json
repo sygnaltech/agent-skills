@@ -1,16 +1,23 @@
 {
   "name": "webflow-code-components",
   "description": "Webflow Code Components documentation and solutions.",
-  "type": "webflow-docs",
-  "source": {
-    "baseUrl": "https://developers.webflow.com",
-    "referencesFile": "references.txt",
-    "pathPrefixToRemove": "/code-components"
-  },
-  "assets": {
-    "skillFile": "SKILL.md",
-    "solutions": [
-      "solutions/**/*.md"
-    ]
-  }
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/**/*.md",
+      "dest": "solutions"
+    },
+    {
+      "type": "downloadFileList",
+      "baseUrl": "https://developers.webflow.com",
+      "listFile": "references.txt",
+      "stripPrefix": "/code-components",
+      "dest": "references"
+    }
+  ]
 }

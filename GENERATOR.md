@@ -32,21 +32,25 @@ The `config.json` file defines how the generator behaves.
 {
   "name": "generator-name",
   "description": "Brief description shown in CLI list command",
-  "type": "webflow-docs",
-  "source": {
-    "baseUrl": "https://docs.example.com",
-    "referencesFile": "references.txt",
-    "pathPrefixToRemove": "/docs"
-  },
-  "assets": {
-    "skillFile": "SKILL.md",
-    "solutions": [
-      "solutions/**/*.md"
-    ],
-    "references": [
-      "references/**/*.md"
-    ]
-  }
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/**/*.md",
+      "dest": "solutions"
+    },
+    {
+      "type": "downloadFileList",
+      "baseUrl": "https://docs.example.com",
+      "listFile": "references.txt",
+      "stripPrefix": "/docs",
+      "dest": "references"
+    }
+  ]
 }
 ```
 
@@ -54,15 +58,18 @@ The `config.json` file defines how the generator behaves.
 
 - **name** (Required): The unique name of the generator. Should match the folder name.
 - **description** (Required): A short description of what the generator does. This is displayed when users run `agent-skills list`.
-- **type** (Optional): The type of generator (e.g., `webflow-docs`).
-- **source** (Optional): Configuration for downloading documentation.
-  - `baseUrl`: The base URL for all relative links in `references.txt`.
-  - `referencesFile`: The filename containing the list of URLs to download.
-  - `pathPrefixToRemove`: A string to strip from the start of downloaded file paths.
-- **assets** (Optional): Configuration for copying static files.
-  - `skillFile`: Path to the `SKILL.md` template.
-  - `solutions`: Array of glob patterns for solution files to copy.
-  - `references`: Array of glob patterns for static reference files to copy.
+- **assets** (Required): An array of asset operations to perform.
+  - **copyFile**: Copies a single file.
+    - `src`: Source path relative to generator folder.
+    - `dest`: Destination path relative to skill folder.
+  - **copyFolder**: Copies files matching a glob pattern.
+    - `pattern`: Glob pattern to match files.
+    - `dest`: Destination directory.
+  - **downloadFileList**: Downloads files listed in a text file.
+    - `baseUrl`: Base URL for downloads.
+    - `listFile`: File containing list of relative paths.
+    - `stripPrefix`: (Optional) Prefix to remove from downloaded paths.
+    - `dest`: Destination directory.
 
 ## Overview
 

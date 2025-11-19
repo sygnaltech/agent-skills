@@ -1,16 +1,23 @@
 {
   "name": "gitbook",
   "description": "A skill generated from a GitBook documentation source.",
-  "type": "webflow-docs",
-  "source": {
-    "baseUrl": "https://docs.example.com",
-    "referencesFile": "references.txt",
-    "pathPrefixToRemove": ""
-  },
-  "assets": {
-    "skillFile": "SKILL.md",
-    "solutions": [
-      "solutions/**/*.md"
-    ]
-  }
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/**/*.md",
+      "dest": "solutions"
+    },
+    {
+      "type": "downloadFileList",
+      "baseUrl": "https://docs.example.com",
+      "listFile": "references.txt",
+      "stripPrefix": "",
+      "dest": "references"
+    }
+  ]
 }
