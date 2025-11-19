@@ -9,6 +9,61 @@ To generate a SKILLS.md file for a generator;
 - Links will be project-relative links to each of those reference files 
 - The purpose is for Claude to easily identify what each file contains and decide where to find what it needs BEFORE opening any files. 
 
+## Generator Folder Structure
+
+Each generator in `src/generators/` must have the following structure:
+
+```
+src/generators/<generator-name>/
+├── config.json        # ← Required: Generator configuration
+├── SKILL.md           # ← Required: Skill definition template
+├── references.txt     # ← Optional: List of URLs to download
+├── solutions/         # ← Optional: Solution templates to copy
+│   └── *.md
+└── references/        # ← Optional: Static reference files to copy
+    └── *.md
+```
+
+## Config.json Specification
+
+The `config.json` file defines how the generator behaves.
+
+```json
+{
+  "name": "generator-name",
+  "description": "Brief description shown in CLI list command",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://docs.example.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": "/docs"
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ],
+    "references": [
+      "references/**/*.md"
+    ]
+  }
+}
+```
+
+### Fields
+
+- **name** (Required): The unique name of the generator. Should match the folder name.
+- **description** (Required): A short description of what the generator does. This is displayed when users run `agent-skills list`.
+- **type** (Optional): The type of generator (e.g., `webflow-docs`).
+- **source** (Optional): Configuration for downloading documentation.
+  - `baseUrl`: The base URL for all relative links in `references.txt`.
+  - `referencesFile`: The filename containing the list of URLs to download.
+  - `pathPrefixToRemove`: A string to strip from the start of downloaded file paths.
+- **assets** (Optional): Configuration for copying static files.
+  - `skillFile`: Path to the `SKILL.md` template.
+  - `solutions`: Array of glob patterns for solution files to copy.
+  - `references`: Array of glob patterns for static reference files to copy.
+
 ## Overview
 
 Each generator downloads documentation to `.claude/skills/<generator-name>/references/`, but Claude needs a `SKILL.md` file in the skill folder to understand what the documentation covers and when to activate the skill.

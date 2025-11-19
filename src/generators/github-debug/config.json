@@ -1,0 +1,16 @@
+{
+  "name": "github-debug",
+  "description": "Used to research GitHub issues and pull requests as part of debugging.",
+  "type": "webflow-docs",
+  "source": {
+    "baseUrl": "https://docs.example.com",
+    "referencesFile": "references.txt",
+    "pathPrefixToRemove": ""
+  },
+  "assets": {
+    "skillFile": "SKILL.md",
+    "solutions": [
+      "solutions/**/*.md"
+    ]
+  }
+}

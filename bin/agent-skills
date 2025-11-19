@@ -18,7 +18,7 @@ async function handleGenerate() {
   if (sources.length === 0) {
     console.error('Error: Please specify at least one documentation source');
     const available = await listSources();
-    console.log(`Available sources: ${available.join(', ')}`);
+    console.log(`Available sources: ${available.map(s => s.name).join(', ')}`);
     console.log('\nUsage: agent-skills learn <source1> [source2] [...]');
     process.exit(1);
   }
@@ -42,7 +42,13 @@ async function handleGenerate() {
 async function handleList() {
   console.log('Available documentation sources:');
   const sources = await listSources();
-  sources.forEach(src => console.log(`  - ${src}`));
+  // Calculate padding for alignment
+  const maxNameLength = Math.max(...sources.map(s => s.name.length));
+
+  sources.forEach(src => {
+    const padding = ' '.repeat(maxNameLength - src.name.length);
+    console.log(`  - ${src.name}${padding}  ${src.description}`);
+  });
 }
 
 function showVersion() {
@@ -88,7 +94,7 @@ async function main() {
       await handleGenerate();
       break;
     case 'list':
-      handleList();
+      await handleList();
       break;
     case 'help':
     case '--help':

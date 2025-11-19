@@ -10,9 +10,20 @@ async function listSources() {
     if (entry.isDirectory()) {
       const configPath = path.join(generatorsDir, entry.name, 'config.json');
       try {
-        await fs.access(configPath);
-        sources.push(entry.name);
-      } catch {}
+        const configContent = await fs.readFile(configPath, 'utf8');
+        const config = JSON.parse(configContent);
+        sources.push({
+          name: entry.name,
+          description: config.description || ''
+        });
+      } catch {
+        // If config is missing or invalid, still list it but without description
+        // or skip it? Original logic skipped if access failed.
+        // Let's keep original behavior of checking access, but now we read it.
+        // If read fails, we might want to skip or list with no description.
+        // Original: await fs.access(configPath); sources.push(entry.name);
+        // If we can't read it, it's probably not a valid generator.
+      }
     }
   }
   return sources;
@@ -25,8 +36,9 @@ async function listSources() {
  */
 async function generate(source) {
   const sources = await listSources();
-  if (!sources.includes(source)) {
-    throw new Error(`Unknown documentation source: ${source}. Available: ${sources.join(', ')}`);
+  const sourceNames = sources.map(s => s.name);
+  if (!sourceNames.includes(source)) {
+    throw new Error(`Unknown documentation source: ${source}. Available: ${sourceNames.join(', ')}`);
   }
   return await runGenerator(source);
 }
