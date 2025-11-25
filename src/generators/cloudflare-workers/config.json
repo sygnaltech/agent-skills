@@ -9,7 +9,7 @@
     },
     {
       "type": "copyFolder",
-      "pattern": "solutions/test-data-images.md",
+      "pattern": "solutions/**/*.md",
       "dest": "solutions"
     }
   ]
