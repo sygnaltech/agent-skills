@@ -1,0 +1,16 @@
+{
+    "name": "wfapi",
+    "description": "Webflow API CLI tool for managing sites, collections, and items.",
+    "assets": [
+        {
+            "type": "copyFile",
+            "src": "SKILL.md",
+            "dest": "SKILL.md"
+        },
+        {
+            "type": "copyFolder",
+            "pattern": "references/*.md",
+            "dest": "references"
+        }
+    ]
+}
