@@ -1,5 +1,5 @@
 
-After reading simply say "AGENTS.md ingested". 
+After reading do not repeat the contents here. Simply say "AGENTS.md ingested" and continue. 
 
 This package creates Claude skills and references in developer projects. 
 

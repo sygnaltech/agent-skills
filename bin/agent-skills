@@ -4,9 +4,18 @@
  * CLI for generating agent skill files
  */
 
+const fs = require('fs/promises');
+const path = require('path');
 const { generate, listSources } = require('../src/index');
 const { version } = require('../package.json');
 const { checkAndUpdate } = require('../src/utils/version-checker');
+const {
+  loadSkillConfig,
+  saveSkillConfig,
+  upsertSkill,
+  removeSkill,
+  getSkillNameSet,
+} = require('../src/skill-config');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -14,24 +23,28 @@ const command = args[0];
 const sources = args.slice(1);
 
 // Command handlers
-async function handleGenerate() {
+async function handleAdd() {
   if (sources.length === 0) {
     console.error('Error: Please specify at least one documentation source');
     const available = await listSources();
     console.log(`Available sources: ${available.map(s => s.name).join(', ')}`);
-    console.log('\nUsage: agent-skills learn <source1> [source2] [...]');
+    console.log('\nUsage: agent-skills add <source1> [source2] [...]');
     process.exit(1);
   }
+
+  const config = await loadSkillConfig();
 
   try {
     console.log(''); // Blank line at top
     for (const source of sources) {
       await generate(source);
+      upsertSkill(config, source, version);
+      await saveSkillConfig(config);
       if (sources.indexOf(source) < sources.length - 1) {
         console.log(''); // Add blank line between multiple sources
       }
     }
-    console.log('\n✓ All skills learned successfully\n');
+    console.log('\n�o" All skills learned successfully\n');
     process.exit(0);
   } catch (err) {
     console.error('Learning failed:', err.message);
@@ -40,15 +53,77 @@ async function handleGenerate() {
 }
 
 async function handleList() {
+  const config = await loadSkillConfig();
+  const learned = getSkillNameSet(config);
+
   console.log('Available documentation sources:');
   const sources = await listSources();
   // Calculate padding for alignment
-  const maxNameLength = Math.max(...sources.map(s => s.name.length));
+  const displayNames = sources.map(src => `${learned.has(src.name) ? '* ' : ''}${src.name}`);
+  const maxNameLength = displayNames.length ? Math.max(...displayNames.map(name => name.length)) : 0;
 
-  sources.forEach(src => {
-    const padding = ' '.repeat(maxNameLength - src.name.length);
-    console.log(`  - ${src.name}${padding}  ${src.description}`);
+  sources.forEach((src, idx) => {
+    const displayName = displayNames[idx];
+    const padding = ' '.repeat(maxNameLength - displayName.length);
+    console.log(`  - ${displayName}${padding}  ${src.description}`);
   });
+}
+
+async function handleUpdate() {
+  const config = await loadSkillConfig();
+  const skillNames = Array.from(new Set((config.skills || []).map(s => s.name)));
+
+  if (skillNames.length === 0) {
+    console.log('No skills found in .agent-skills to update.');
+    return;
+  }
+
+  try {
+    console.log('');
+    for (const skill of skillNames) {
+      await generate(skill);
+      upsertSkill(config, skill, version);
+      await saveSkillConfig(config);
+      if (skillNames.indexOf(skill) < skillNames.length - 1) {
+        console.log('');
+      }
+    }
+    console.log('\n�o" All skills updated successfully\n');
+  } catch (err) {
+    console.error('Update failed:', err.message);
+    process.exit(1);
+  }
+}
+
+async function handleRemove() {
+  if (sources.length === 0) {
+    console.error('Error: Please specify at least one documentation source to remove');
+    console.log('\nUsage: agent-skills remove <source1> [source2] [...]');
+    process.exit(1);
+  }
+
+  const config = await loadSkillConfig();
+  let changed = false;
+
+  for (const source of sources) {
+    const skillDir = path.resolve(process.cwd(), '.claude', 'skills', source);
+    try {
+      await fs.rm(skillDir, { recursive: true, force: true });
+      console.log(`Removed: ${skillDir}`);
+    } catch (err) {
+      console.warn(`Could not remove ${skillDir}: ${err.message}`);
+    }
+
+    if (removeSkill(config, source)) {
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    await saveSkillConfig(config);
+  }
+
+  console.log('\nSkill removal completed\n');
 }
 
 function showVersion() {
@@ -61,20 +136,26 @@ Agent Skills Generator v${version}
 ==================================
 
 Usage:
+  agent-skills add <source1> [source2] [...]
   agent-skills learn <source1> [source2] [...]
   agent-skills list
+  agent-skills update
+  agent-skills remove <source1> [source2] [...]
   agent-skills help
   agent-skills --version
 
 Commands:
-  learn <sources...>     Learn skills from one or more documentation sources
-  list                   List available documentation sources
+  add <sources...>       Add skills from one or more documentation sources
+  learn <sources...>     Alias for add
+  list                   List available documentation sources (* = already added)
+  update                 Re-install all skills recorded in .agent-skills
+  remove <sources...>    Remove skills and clear their .agent-skills records
   help                   Show this help message
   --version, -v          Show version number
 
 Examples:
-  agent-skills learn webflow-cloud
-  agent-skills learn webflow-cloud webflow-code-components
+  agent-skills add webflow-cloud
+  agent-skills add webflow-cloud webflow-code-components
   agent-skills list
   agent-skills -v
   `);
@@ -89,12 +170,19 @@ async function main() {
 
   // Route commands
   switch (command) {
+    case 'add':
     case 'learn':
     case 'generate':
-      await handleGenerate();
+      await handleAdd();
       break;
     case 'list':
       await handleList();
+      break;
+    case 'update':
+      await handleUpdate();
+      break;
+    case 'remove':
+      await handleRemove();
       break;
     case 'help':
     case '--help':
