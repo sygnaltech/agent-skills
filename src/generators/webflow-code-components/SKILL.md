@@ -865,3 +865,25 @@ Activate this skill when users ask about:
 
 ## Specific Solutions, Tips & Workarounds
 
+### [using slots](solutions/slots.md)
+
+- How Slots Work in Webflow 
+- The Slot Wrapper Problem 
+- Shadow DOM Pseudo-selectors - Deep dive into :host and ::slotted() with examples
+- display: contents Explanation - The crucial CSS property for slot layouts
+- Common Patterns and Solutions - 4 proven patterns including Grid layout and click interception
+- Slot Limitations and Workarounds - 5 major limitations with practical solutions
+- Slot Best Practices - 6 key practices for robust slot implementations
+- Slot Debug Checklist - Step-by-step debugging guide
+
+And specifically for troubleshooting; 
+
+- Why React.Children.toArray(content) doesn't work with slots
+- How :host applies styles to the shadow host from within Shadow DOM
+- How ::slotted() can only target direct children, not descendants
+- The "Golden Pattern" for slot layouts using :host + ::slotted(*)
+- Why !important is needed to override Webflow's inline styles
+- How pointerEvents: 'none' enables click interception on slotted content
+
+
+
