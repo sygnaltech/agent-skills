@@ -4,6 +4,8 @@
 
 - Empty string fields are treated as NULLs  
 
+- Slugs are case-sensitive through the API. When doing slug lookups and record creations ensure you are consistent in casing. 
+
 ## Unexpected Behaviors 
 
 ### Item GET may not return the full structure 
