@@ -1,0 +1,23 @@
+{
+  "name": "notion-api",
+  "description": "Notion API documentation and developer guides.",
+  "assets": [
+    {
+      "type": "copyFile",
+      "src": "SKILL.md",
+      "dest": "SKILL.md"
+    },
+    {
+      "type": "copyFolder",
+      "pattern": "solutions/**/*.md",
+      "dest": "solutions"
+    },
+    {
+      "type": "downloadFileList",
+      "baseUrl": "https://developers.notion.com",
+      "listFile": "references.txt",
+      "stripPrefix": "",
+      "dest": "references"
+    }
+  ]
+}

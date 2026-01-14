@@ -1,0 +1,141 @@
+# Notion API Documentation URLs
+# Source: https://developers.notion.com/llms.txt
+# One URL per line. Lines starting with # are ignored.
+
+# Guides - Getting Started
+/docs/getting-started.md
+/docs/create-a-notion-integration.md
+/docs/authorization.md
+/docs/publishing-integrations-to-notions-integration-gallery.md
+
+# Guides - Upgrades
+/docs/upgrade-guide-2025-09-03.md
+/docs/upgrade-faqs-2025-09-03.md
+
+# Guides - MCP (Model Context Protocol)
+/docs/mcp.md
+/docs/get-started-with-mcp.md
+/docs/mcp-supported-tools.md
+/docs/mcp-security-best-practices.md
+/docs/hosting-open-source-mcp.md
+/docs/common-mcp-clients.md
+
+# Guides - Working with Content
+/docs/working-with-page-content.md
+/docs/working-with-databases.md
+/docs/creating-pages-from-templates.md
+/docs/working-with-comments.md
+
+# Guides - Files & Media
+/docs/working-with-files-and-media.md
+/docs/uploading-small-files.md
+/docs/retrieving-files.md
+/docs/sending-larger-files.md
+/docs/importing-external-files.md
+
+# Guides - Link Previews
+/docs/link-previews.md
+/docs/build-a-link-preview-integration.md
+
+# Guides - Best Practices & Changelog
+/docs/best-practices-for-handling-api-keys.md
+/docs/historical-changelog.md
+
+# Reference - Introduction & Core
+/reference/intro.md
+/reference/capabilities.md
+/reference/authentication.md
+/reference/versioning.md
+/reference/changes-by-version.md
+
+# Reference - Webhooks & Limits
+/reference/webhooks.md
+/reference/webhooks-events-delivery.md
+/reference/request-limits.md
+/reference/status-codes.md
+
+# Reference - Block Object & Operations
+/reference/block.md
+/reference/patch-block-children.md
+/reference/retrieve-a-block.md
+/reference/get-block-children.md
+/reference/update-a-block.md
+/reference/delete-a-block.md
+
+# Reference - Rich Text
+/reference/rich-text.md
+
+# Reference - Page Object & Operations
+/reference/page.md
+/reference/page-property-values.md
+/reference/property-item-object.md
+/reference/post-page.md
+/reference/retrieve-a-page.md
+/reference/retrieve-a-page-property.md
+/reference/patch-page.md
+/reference/archive-a-page.md
+/reference/move-page.md
+
+# Reference - Database Object & Operations
+/reference/database.md
+/reference/property-object.md
+/reference/create-a-database.md
+/reference/database-create.md
+/reference/database-retrieve.md
+/reference/retrieve-a-database.md
+/reference/database-update.md
+/reference/update-a-database.md
+/reference/update-property-schema-object.md
+/reference/get-databases.md
+/reference/post-database-query.md
+/reference/post-database-query-filter.md
+/reference/post-database-query-sort.md
+
+# Reference - Data Source Operations
+/reference/data-source.md
+/reference/create-a-data-source.md
+/reference/update-a-data-source.md
+/reference/update-data-source-properties.md
+/reference/retrieve-a-data-source.md
+/reference/query-a-data-source.md
+/reference/filter-data-source-entries.md
+/reference/sort-data-source-entries.md
+/reference/list-data-source-templates.md
+
+# Reference - Comment Object & Operations
+/reference/comment-object.md
+/reference/comment-attachment.md
+/reference/comment-display-name.md
+/reference/create-a-comment.md
+/reference/retrieve-comment.md
+/reference/list-comments.md
+
+# Reference - File Object & Operations
+/reference/file-object.md
+/reference/file-upload.md
+/reference/create-a-file-upload.md
+/reference/send-a-file-upload.md
+/reference/complete-a-file-upload.md
+/reference/retrieve-a-file-upload.md
+/reference/list-file-uploads.md
+
+# Reference - User Object & Operations
+/reference/user.md
+/reference/get-users.md
+/reference/get-user.md
+/reference/get-self.md
+
+# Reference - Other Objects
+/reference/parent-object.md
+/reference/emoji-object.md
+/reference/unfurl-attribute-object.md
+
+# Reference - Token Operations
+/reference/create-a-token.md
+/reference/introspect-token.md
+/reference/revoke-token.md
+/reference/refresh-a-token.md
+
+# Reference - Search
+/reference/post-search.md
+/reference/search-optimizations-and-limitations.md
